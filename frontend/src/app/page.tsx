@@ -37,9 +37,9 @@ export default function HomePage() {
       api.getBuildLogs(),
     ])
       .then(([proj, sett, logs]) => {
-        setProjects(proj.slice(0, 3));
+        setProjects(proj);
         setSettings(sett);
-        setBuildLogs(logs.slice(0, 2));
+        setBuildLogs(logs.slice(0, 3));
         setLoaded(true);
       })
       .catch(() => setLoaded(true));
@@ -47,7 +47,10 @@ export default function HomePage() {
     api.trackPageView("/");
   }, []);
 
-  const currentProject = projects.find((p) => p.status === "in-development");
+  const currentProject =
+    projects.find((p) => p.slug === "swasthya-sathi-ai") ||
+    projects.find((p) => p.status === "live" || p.status === "in-development") ||
+    projects[0];
 
   return (
     <div className="relative">
@@ -125,7 +128,9 @@ export default function HomePage() {
                   <Brain size={24} />
                 </div>
                 <div>
-                  <span className="section-label text-xs">Currently Building</span>
+                  <span className="section-label text-xs">
+                    {currentProject.status === "live" ? "Featured Flagship" : "Currently Building"}
+                  </span>
                   <h3 className="text-xl font-bold mt-1">{currentProject.title}</h3>
                   <p className="text-[var(--color-text-secondary)] text-sm mt-1">
                     {currentProject.shortDescription}
@@ -139,12 +144,24 @@ export default function HomePage() {
                   </div>
                 </div>
               </div>
-              <Link
-                href={`/work/${currentProject.slug}`}
-                className="btn btn-ghost text-[var(--color-brand)] whitespace-nowrap self-start md:self-center"
-              >
-                View project <ChevronRight size={16} />
-              </Link>
+              <div className="flex items-center gap-3 self-start md:self-center">
+                {currentProject.liveUrl && (
+                  <a
+                    href={currentProject.liveUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn btn-primary text-xs py-2 px-3 flex items-center gap-1.5"
+                  >
+                    <ExternalLink size={14} /> Live Demo
+                  </a>
+                )}
+                <Link
+                  href={`/work/${currentProject.slug}`}
+                  className="btn btn-ghost text-[var(--color-brand)] whitespace-nowrap"
+                >
+                  Case study <ChevronRight size={16} />
+                </Link>
+              </div>
             </div>
           </div>
         </SectionWrapper>
@@ -224,7 +241,7 @@ export default function HomePage() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {(loaded ? projects : Array(3).fill(null)).map((project, i) =>
+          {(loaded ? projects.slice(0, 6) : Array(6).fill(null)).map((project, i) =>
             project ? (
               <motion.div
                 key={project.id}

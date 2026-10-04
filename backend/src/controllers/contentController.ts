@@ -37,7 +37,7 @@ export async function getAllMessages(_req: Request, res: Response): Promise<void
 
 export async function updateMessageStatus(req: Request, res: Response): Promise<void> {
   try {
-    const { id } = req.params;
+    const id = req.params.id as string;
     const { status } = req.body;
 
     const msg = await prisma.message.update({
@@ -53,7 +53,7 @@ export async function updateMessageStatus(req: Request, res: Response): Promise<
 
 export async function deleteMessage(req: Request, res: Response): Promise<void> {
   try {
-    await prisma.message.delete({ where: { id: req.params.id } });
+    await prisma.message.delete({ where: { id: req.params.id as string } });
     res.json({ message: "Message deleted" });
   } catch (error) {
     console.error("Delete message error:", error);
@@ -96,7 +96,7 @@ export async function createTimelineEvent(req: Request, res: Response): Promise<
 export async function updateTimelineEvent(req: Request, res: Response): Promise<void> {
   try {
     const event = await prisma.timelineEvent.update({
-      where: { id: req.params.id },
+      where: { id: req.params.id as string },
       data: req.body,
     });
     res.json(event);
@@ -108,7 +108,7 @@ export async function updateTimelineEvent(req: Request, res: Response): Promise<
 
 export async function deleteTimelineEvent(req: Request, res: Response): Promise<void> {
   try {
-    await prisma.timelineEvent.delete({ where: { id: req.params.id } });
+    await prisma.timelineEvent.delete({ where: { id: req.params.id as string } });
     res.json({ message: "Timeline event deleted" });
   } catch (error) {
     console.error("Delete timeline event error:", error);
@@ -156,7 +156,7 @@ export async function createBuildLog(req: Request, res: Response): Promise<void>
 export async function updateBuildLog(req: Request, res: Response): Promise<void> {
   try {
     const log = await prisma.buildLog.update({
-      where: { id: req.params.id },
+      where: { id: req.params.id as string },
       data: req.body,
     });
     res.json(log);
@@ -168,7 +168,7 @@ export async function updateBuildLog(req: Request, res: Response): Promise<void>
 
 export async function deleteBuildLog(req: Request, res: Response): Promise<void> {
   try {
-    await prisma.buildLog.delete({ where: { id: req.params.id } });
+    await prisma.buildLog.delete({ where: { id: req.params.id as string } });
     res.json({ message: "Build log deleted" });
   } catch (error) {
     console.error("Delete build log error:", error);
@@ -206,7 +206,7 @@ export async function upsertSocialLink(req: Request, res: Response): Promise<voi
 
 export async function deleteSocialLink(req: Request, res: Response): Promise<void> {
   try {
-    await prisma.socialLink.delete({ where: { id: req.params.id } });
+    await prisma.socialLink.delete({ where: { id: req.params.id as string } });
     res.json({ message: "Social link deleted" });
   } catch (error) {
     console.error("Delete social link error:", error);

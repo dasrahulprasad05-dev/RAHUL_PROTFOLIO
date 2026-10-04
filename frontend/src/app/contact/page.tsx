@@ -158,10 +158,10 @@ export default function ContactPage() {
                 </h3>
                 <div className="space-y-4">
                   {[
-                    { icon: Mail, label: "rahul@example.com", href: "mailto:rahul@example.com" },
-                    { icon: Github, label: "github.com/rahul", href: "https://github.com/rahul" },
-                    { icon: Linkedin, label: "linkedin.com/in/rahul", href: "https://linkedin.com/in/rahul" },
-                    { icon: MapPin, label: "India", href: "#" },
+                    { icon: Mail, label: "dasrahulprasad05@gmail.com", href: "mailto:dasrahulprasad05@gmail.com" },
+                    { icon: Github, label: "github.com/dasrahulprasad05-dev", href: "https://github.com/dasrahulprasad05-dev" },
+                    { icon: Linkedin, label: "linkedin.com/in/rahul-prasad-das", href: "https://linkedin.com/in/rahul-prasad-das" },
+                    { icon: MapPin, label: "Cuttack, Odisha, India", href: "https://maps.google.com/?q=Cuttack,Odisha" },
                   ].map((item) => (
                     <a
                       key={item.label}

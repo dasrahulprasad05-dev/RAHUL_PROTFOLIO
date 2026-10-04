@@ -109,10 +109,10 @@ export default function AboutPage() {
                 </h3>
                 <div className="space-y-2">
                   {[
-                    { icon: Github, label: "GitHub", href: "https://github.com/rahul" },
-                    { icon: Linkedin, label: "LinkedIn", href: "https://linkedin.com/in/rahul" },
-                    { icon: Twitter, label: "Twitter", href: "https://twitter.com/rahul" },
-                    { icon: Mail, label: "Email", href: "mailto:rahul@example.com" },
+                    { icon: Github, label: "GitHub", href: settings.github_url || "https://github.com/dasrahulprasad05-dev" },
+                    { icon: Linkedin, label: "LinkedIn", href: settings.linkedin_url || "https://linkedin.com/in/rahul-prasad-das" },
+                    { icon: Twitter, label: "Twitter", href: "https://x.com" },
+                    { icon: Mail, label: "Email", href: `mailto:${settings.contact_email || "dasrahulprasad05@gmail.com"}` },
                   ].map((s) => (
                     <a
                       key={s.label}

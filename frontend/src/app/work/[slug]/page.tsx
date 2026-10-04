@@ -6,9 +6,10 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import {
-  ArrowLeft, ExternalLink, AlertTriangle, Lightbulb, Target, Wrench, Trophy, BookOpen
+  ArrowLeft, ExternalLink, AlertTriangle, Lightbulb, Target, Wrench, Trophy, BookOpen, Layers
 } from "lucide-react";
 import { api, type ProjectWithTech } from "@/lib/api";
+import MarkdownViewer from "@/components/MarkdownViewer";
 
 export default function ProjectPage() {
   const params = useParams();
@@ -161,12 +162,38 @@ export default function ProjectPage() {
           ))}
         </div>
 
+        {/* Technical Architecture & Deep Dive (from Content) */}
+        {project.content && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="mt-16 pt-10 border-t border-[var(--color-border)]"
+          >
+            <div className="flex items-center gap-3 mb-6">
+              <div className="p-2.5 rounded-xl bg-[var(--color-brand-glow)] text-[var(--color-brand)]">
+                <Layers size={22} />
+              </div>
+              <div>
+                <span className="section-label text-xs">Technical Deep Dive</span>
+                <h2 className="text-xl md:text-2xl font-black text-[var(--color-text-primary)]">
+                  Architecture & Specifications
+                </h2>
+              </div>
+            </div>
+
+            <div className="card bg-[var(--color-surface)] border-[var(--color-border)] p-6 md:p-8">
+              <MarkdownViewer content={project.content} />
+            </div>
+          </motion.div>
+        )}
+
         {/* Tech Stack */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="mt-12"
+          className="mt-16 pt-10 border-t border-[var(--color-border)]"
         >
           <div className="flex items-center gap-3 mb-4">
             <Target size={20} className="text-[var(--color-brand)]" />

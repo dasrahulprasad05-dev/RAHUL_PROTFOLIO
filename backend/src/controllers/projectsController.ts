@@ -42,7 +42,7 @@ export async function getAllProjects(req: Request, res: Response): Promise<void>
 
 export async function getProjectBySlug(req: Request, res: Response): Promise<void> {
   try {
-    const { slug } = req.params;
+    const slug = req.params.slug as string;
 
     const project = await prisma.project.findUnique({
       where: { slug },
@@ -68,7 +68,7 @@ export async function getProjectBySlug(req: Request, res: Response): Promise<voi
 
     res.json({
       ...project,
-      technologies: project.technologies.map((pt) => pt.technology),
+      technologies: (project as any).technologies.map((pt: any) => pt.technology),
     });
   } catch (error) {
     console.error("Get project error:", error);
@@ -100,7 +100,7 @@ export async function createProject(req: Request, res: Response): Promise<void> 
 
     res.status(201).json({
       ...project,
-      technologies: project.technologies.map((pt) => pt.technology),
+      technologies: (project as any).technologies.map((pt: any) => pt.technology),
     });
   } catch (error) {
     console.error("Create project error:", error);
@@ -110,7 +110,7 @@ export async function createProject(req: Request, res: Response): Promise<void> 
 
 export async function updateProject(req: Request, res: Response): Promise<void> {
   try {
-    const { id } = req.params;
+    const id = req.params.id as string;
     const { technologies: techIds, ...data } = req.body;
 
     // If technologies are provided, replace them
@@ -137,7 +137,7 @@ export async function updateProject(req: Request, res: Response): Promise<void> 
 
     res.json({
       ...project,
-      technologies: project.technologies.map((pt) => pt.technology),
+      technologies: (project as any).technologies.map((pt: any) => pt.technology),
     });
   } catch (error) {
     console.error("Update project error:", error);
@@ -147,7 +147,7 @@ export async function updateProject(req: Request, res: Response): Promise<void> 
 
 export async function deleteProject(req: Request, res: Response): Promise<void> {
   try {
-    const { id } = req.params;
+    const id = req.params.id as string;
     await prisma.project.delete({ where: { id } });
     res.json({ message: "Project deleted" });
   } catch (error) {

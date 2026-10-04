@@ -8,10 +8,10 @@ import {
 import { useState, useEffect } from "react";
 
 const socialLinks = [
-  { icon: Github, href: "https://github.com/rahul", label: "GitHub" },
-  { icon: Linkedin, href: "https://linkedin.com/in/rahul", label: "LinkedIn" },
-  { icon: Twitter, href: "https://twitter.com/rahul", label: "Twitter" },
-  { icon: Mail, href: "mailto:rahul@example.com", label: "Email" },
+  { icon: Github, href: "https://github.com/dasrahulprasad05-dev", label: "GitHub" },
+  { icon: Linkedin, href: "https://linkedin.com/in/rahul-prasad-das", label: "LinkedIn" },
+  { icon: Twitter, href: "https://x.com", label: "Twitter" },
+  { icon: Mail, href: "mailto:dasrahulprasad05@gmail.com", label: "Email" },
 ];
 
 const quickLinks = [

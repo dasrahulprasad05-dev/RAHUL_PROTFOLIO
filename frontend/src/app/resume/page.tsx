@@ -50,10 +50,10 @@ export default function ResumePage() {
                 {settings.site_tagline || "AI/ML Builder & Problem Solver"}
               </p>
               <div className="flex flex-wrap gap-4 mt-3 text-sm text-[var(--color-text-muted)]">
-                <span className="flex items-center gap-1"><MapPin size={14} /> India</span>
-                <span className="flex items-center gap-1"><Mail size={14} /> rahul@example.com</span>
-                <a href="https://github.com/rahul" className="flex items-center gap-1 hover:text-[var(--color-brand)]"><Github size={14} /> GitHub</a>
-                <a href="https://linkedin.com/in/rahul" className="flex items-center gap-1 hover:text-[var(--color-brand)]"><Linkedin size={14} /> LinkedIn</a>
+                <span className="flex items-center gap-1"><MapPin size={14} /> Odisha, India</span>
+                <span className="flex items-center gap-1"><Mail size={14} /> {settings.contact_email || "dasrahulprasad05@gmail.com"}</span>
+                <a href={settings.github_url || "https://github.com/dasrahulprasad05-dev"} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 hover:text-[var(--color-brand)]"><Github size={14} /> GitHub</a>
+                <a href={settings.linkedin_url || "https://linkedin.com/in/rahul-prasad-das"} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 hover:text-[var(--color-brand)]"><Linkedin size={14} /> LinkedIn</a>
               </div>
             </div>
             <a

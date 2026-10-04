@@ -36,7 +36,7 @@ export async function createSkill(req: Request, res: Response): Promise<void> {
 export async function updateSkill(req: Request, res: Response): Promise<void> {
   try {
     const skill = await prisma.skill.update({
-      where: { id: req.params.id },
+      where: { id: req.params.id as string },
       data: req.body,
     });
     res.json(skill);
@@ -48,7 +48,7 @@ export async function updateSkill(req: Request, res: Response): Promise<void> {
 
 export async function deleteSkill(req: Request, res: Response): Promise<void> {
   try {
-    await prisma.skill.delete({ where: { id: req.params.id } });
+    await prisma.skill.delete({ where: { id: req.params.id as string } });
     res.json({ message: "Skill deleted" });
   } catch (error) {
     console.error("Delete skill error:", error);
@@ -81,7 +81,7 @@ export async function createEducation(req: Request, res: Response): Promise<void
 export async function updateEducation(req: Request, res: Response): Promise<void> {
   try {
     const education = await prisma.education.update({
-      where: { id: req.params.id },
+      where: { id: req.params.id as string },
       data: req.body,
     });
     res.json(education);
@@ -93,7 +93,7 @@ export async function updateEducation(req: Request, res: Response): Promise<void
 
 export async function deleteEducation(req: Request, res: Response): Promise<void> {
   try {
-    await prisma.education.delete({ where: { id: req.params.id } });
+    await prisma.education.delete({ where: { id: req.params.id as string } });
     res.json({ message: "Education deleted" });
   } catch (error) {
     console.error("Delete education error:", error);
@@ -126,7 +126,7 @@ export async function createAchievement(req: Request, res: Response): Promise<vo
 export async function updateAchievement(req: Request, res: Response): Promise<void> {
   try {
     const achievement = await prisma.achievement.update({
-      where: { id: req.params.id },
+      where: { id: req.params.id as string },
       data: req.body,
     });
     res.json(achievement);
@@ -138,7 +138,7 @@ export async function updateAchievement(req: Request, res: Response): Promise<vo
 
 export async function deleteAchievement(req: Request, res: Response): Promise<void> {
   try {
-    await prisma.achievement.delete({ where: { id: req.params.id } });
+    await prisma.achievement.delete({ where: { id: req.params.id as string } });
     res.json({ message: "Achievement deleted" });
   } catch (error) {
     console.error("Delete achievement error:", error);
@@ -171,7 +171,7 @@ export async function createExperience(req: Request, res: Response): Promise<voi
 export async function updateExperience(req: Request, res: Response): Promise<void> {
   try {
     const experience = await prisma.experience.update({
-      where: { id: req.params.id },
+      where: { id: req.params.id as string },
       data: req.body,
     });
     res.json(experience);
@@ -183,7 +183,7 @@ export async function updateExperience(req: Request, res: Response): Promise<voi
 
 export async function deleteExperience(req: Request, res: Response): Promise<void> {
   try {
-    await prisma.experience.delete({ where: { id: req.params.id } });
+    await prisma.experience.delete({ where: { id: req.params.id as string } });
     res.json({ message: "Experience deleted" });
   } catch (error) {
     console.error("Delete experience error:", error);
