@@ -32,38 +32,122 @@ async function fetchAPI<T>(endpoint: string, options: FetchOptions = {}): Promis
 
 // ─── Public API ───────────────────────────────────────────
 
+import {
+  fallbackProjects,
+  fallbackSkills,
+  fallbackEducation,
+  fallbackAchievements,
+  fallbackTimeline,
+  fallbackBuildLogs,
+  fallbackSettings,
+} from "./fallbackData";
+
 export const api = {
   // Projects
-  getProjects: (params?: Record<string, string>) => {
+  getProjects: async (params?: Record<string, string>): Promise<ProjectWithTech[]> => {
     const query = params ? `?${new URLSearchParams(params)}` : "";
-    return fetchAPI<ProjectWithTech[]>(`/projects${query}`);
+    try {
+      const data = await fetchAPI<ProjectWithTech[]>(`/projects${query}`);
+      return data && data.length > 0 ? data : (params?.featured === "true" ? fallbackProjects.filter((p) => p.featured) : fallbackProjects);
+    } catch {
+      if (params?.featured === "true") {
+        return fallbackProjects.filter((p) => p.featured);
+      }
+      return fallbackProjects;
+    }
   },
-  getProject: (slug: string) => fetchAPI<ProjectWithTech>(`/projects/${slug}`),
+  getProject: async (slug: string): Promise<ProjectWithTech> => {
+    try {
+      return await fetchAPI<ProjectWithTech>(`/projects/${slug}`);
+    } catch {
+      const match = fallbackProjects.find((p) => p.slug === slug);
+      if (match) return match;
+      throw new Error("Project not found");
+    }
+  },
 
   // Skills
-  getSkills: () => fetchAPI<{ skills: Skill[]; grouped: Record<string, Skill[]> }>("/skills"),
+  getSkills: async (): Promise<{ skills: Skill[]; grouped: Record<string, Skill[]> }> => {
+    try {
+      const data = await fetchAPI<{ skills: Skill[]; grouped: Record<string, Skill[]> }>("/skills");
+      return data?.skills?.length ? data : fallbackSkills;
+    } catch {
+      return fallbackSkills;
+    }
+  },
 
   // Education
-  getEducation: () => fetchAPI<Education[]>("/education"),
+  getEducation: async (): Promise<Education[]> => {
+    try {
+      const data = await fetchAPI<Education[]>("/education");
+      return data?.length ? data : fallbackEducation;
+    } catch {
+      return fallbackEducation;
+    }
+  },
 
   // Experience
-  getExperience: () => fetchAPI<Experience[]>("/experience"),
+  getExperience: async (): Promise<Experience[]> => {
+    try {
+      return await fetchAPI<Experience[]>("/experience");
+    } catch {
+      return [];
+    }
+  },
 
   // Achievements
-  getAchievements: () => fetchAPI<Achievement[]>("/achievements"),
+  getAchievements: async (): Promise<Achievement[]> => {
+    try {
+      const data = await fetchAPI<Achievement[]>("/achievements");
+      return data?.length ? data : fallbackAchievements;
+    } catch {
+      return fallbackAchievements;
+    }
+  },
 
   // Timeline
-  getTimeline: () =>
-    fetchAPI<{ events: TimelineEvent[]; grouped: Record<string, TimelineEvent[]> }>("/timeline"),
+  getTimeline: async (): Promise<{ events: TimelineEvent[]; grouped: Record<string, TimelineEvent[]> }> => {
+    try {
+      const data = await fetchAPI<{ events: TimelineEvent[]; grouped: Record<string, TimelineEvent[]> }>("/timeline");
+      return data?.events?.length ? data : fallbackTimeline;
+    } catch {
+      return fallbackTimeline;
+    }
+  },
 
   // Build Log
-  getBuildLogs: () => fetchAPI<BuildLog[]>("/build-log"),
+  getBuildLogs: async (): Promise<BuildLog[]> => {
+    try {
+      const data = await fetchAPI<BuildLog[]>("/build-log");
+      return data?.length ? data : fallbackBuildLogs;
+    } catch {
+      return fallbackBuildLogs;
+    }
+  },
 
   // Social Links
-  getSocialLinks: () => fetchAPI<SocialLink[]>("/social-links"),
+  getSocialLinks: async (): Promise<SocialLink[]> => {
+    try {
+      return await fetchAPI<SocialLink[]>("/social-links");
+    } catch {
+      return [
+        { id: "sl-1", platform: "github", url: "https://github.com/dasrahulprasad05-dev", icon: "Github", order: 1 },
+        { id: "sl-2", platform: "linkedin", url: "https://linkedin.com/in/rahul-prasad-das", icon: "Linkedin", order: 2 },
+        { id: "sl-3", platform: "twitter", url: "https://x.com", icon: "Twitter", order: 3 },
+        { id: "sl-4", platform: "email", url: "mailto:dasrahulprasad05@gmail.com", icon: "Mail", order: 4 },
+      ];
+    }
+  },
 
   // Settings
-  getSettings: () => fetchAPI<Record<string, string>>("/settings"),
+  getSettings: async (): Promise<Record<string, string>> => {
+    try {
+      const data = await fetchAPI<Record<string, string>>("/settings");
+      return Object.keys(data || {}).length ? data : fallbackSettings;
+    } catch {
+      return fallbackSettings;
+    }
+  },
 
   // Contact
   sendMessage: (data: { name: string; email: string; subject: string; message: string }) =>
