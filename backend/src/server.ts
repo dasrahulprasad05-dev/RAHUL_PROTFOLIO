@@ -11,8 +11,24 @@ import contentRoutes from "./routes/content.js";
 const app = express();
 
 // ─── Middleware ────────────────────────────────────────────
+const allowedOrigins = [
+  config.frontendUrl,
+  "http://localhost:3000",
+].filter(Boolean);
+
 app.use(cors({
-  origin: config.frontendUrl,
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true);
+    if (
+      config.frontendUrl === "*" ||
+      allowedOrigins.includes(origin) ||
+      origin.endsWith(".vercel.app") ||
+      origin.includes("localhost")
+    ) {
+      return callback(null, true);
+    }
+    return callback(null, true);
+  },
   credentials: true,
 }));
 app.use(express.json({ limit: "10mb" }));
