@@ -1,11 +1,12 @@
 "use client";
 
 import { Github } from "@/components/Icons";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { motion, useInView } from "framer-motion";
 import {
-  ArrowRight, Brain, Sparkles, BookOpen, Target, ExternalLink, ChevronRight
+  ArrowRight, Brain, Sparkles, BookOpen, Target, ExternalLink, ChevronRight,
+  Zap, Code2, Layers, Rocket
 } from "lucide-react";
 import SectionWrapper from "@/components/SectionWrapper";
 import { api, type ProjectWithTech, type BuildLog } from "@/lib/api";
@@ -23,6 +24,80 @@ const fadeUp = {
   hidden: { opacity: 0, y: 20 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] } },
 };
+
+// ─── Animated counter component ───────────────────────────
+function AnimatedCounter({ target, suffix = "" }: { target: number; suffix?: string }) {
+  const [count, setCount] = useState(0);
+  const ref = useRef<HTMLSpanElement>(null);
+  const isInView = useInView(ref, { once: true, margin: "-50px" });
+
+  useEffect(() => {
+    if (!isInView) return;
+    let start = 0;
+    const duration = 1500;
+    const step = Math.max(1, Math.floor(target / 60));
+    const interval = duration / (target / step);
+
+    const timer = setInterval(() => {
+      start += step;
+      if (start >= target) {
+        setCount(target);
+        clearInterval(timer);
+      } else {
+        setCount(start);
+      }
+    }, interval);
+
+    return () => clearInterval(timer);
+  }, [isInView, target]);
+
+  return (
+    <span ref={ref} className="counter-number">
+      {count}{suffix}
+    </span>
+  );
+}
+
+// ─── Typewriter component ─────────────────────────────────
+function TypewriterText({ text }: { text: string }) {
+  const [displayText, setDisplayText] = useState("");
+  const [showCursor, setShowCursor] = useState(true);
+
+  useEffect(() => {
+    let i = 0;
+    const timer = setInterval(() => {
+      if (i < text.length) {
+        setDisplayText(text.slice(0, i + 1));
+        i++;
+      } else {
+        clearInterval(timer);
+        // Keep cursor blinking for a bit after finishing
+        setTimeout(() => setShowCursor(false), 2000);
+      }
+    }, 80);
+    return () => clearInterval(timer);
+  }, [text]);
+
+  return (
+    <span>
+      {displayText}
+      {showCursor && (
+        <span className="inline-block w-[3px] h-[1em] bg-[var(--color-brand)] ml-1 align-middle" style={{ animation: 'typewriter-cursor 0.8s step-end infinite' }} />
+      )}
+    </span>
+  );
+}
+
+// ─── Get category accent class ────────────────────────────
+function getCategoryAccent(category: string): string {
+  switch (category) {
+    case "AI/ML": return "card-accent-ai";
+    case "Web": return "card-accent-web";
+    case "Data": return "card-accent-data";
+    case "Hackathon": return "card-accent-hackathon";
+    default: return "card-accent-ai";
+  }
+}
 
 export default function HomePage() {
   const [projects, setProjects] = useState<ProjectWithTech[]>([]);
@@ -55,34 +130,45 @@ export default function HomePage() {
   return (
     <div className="relative">
       {/* ─── Hero ──────────────────────────────────────── */}
-      <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
-        {/* Background Gradient Orbs */}
+      <section className="relative min-h-[85vh] flex items-center justify-center overflow-hidden">
+        {/* Background Gradient Orbs — Enhanced with parallax-like movement */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute -top-40 -right-40 w-96 h-96 rounded-full bg-[var(--color-brand)] opacity-[0.07] blur-[100px]" />
-          <div className="absolute -bottom-40 -left-40 w-96 h-96 rounded-full bg-[var(--color-accent)] opacity-[0.05] blur-[100px]" />
+          <div className="absolute -top-40 -right-40 w-[500px] h-[500px] rounded-full bg-[var(--color-brand)] opacity-[0.08] blur-[120px] animate-float-slow" />
+          <div className="absolute -bottom-40 -left-40 w-[500px] h-[500px] rounded-full bg-[var(--color-accent)] opacity-[0.06] blur-[120px] animate-float-slow" style={{ animationDelay: '-3s' }} />
+          <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[400px] h-[400px] rounded-full bg-gradient-to-br from-[var(--color-brand)] to-[var(--color-accent)] opacity-[0.04] blur-[100px] animate-float-slow" style={{ animationDelay: '-1.5s' }} />
         </div>
 
-        <div className="max-w-6xl mx-auto px-6 py-32">
+        {/* Decorative grid pattern */}
+        <div className="absolute inset-0 pointer-events-none opacity-[0.02]" style={{
+          backgroundImage: `radial-gradient(circle, var(--color-text-primary) 1px, transparent 1px)`,
+          backgroundSize: '40px 40px'
+        }} />
+
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-16 md:py-24">
           <motion.div
             variants={stagger}
             initial="hidden"
             animate="visible"
             className="max-w-3xl"
           >
-            {/* Label */}
+            {/* Label with glowing border */}
             <motion.div variants={fadeUp} className="mb-6">
-              <span className="section-label inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-[var(--color-border)] bg-[var(--color-surface-elevated)]">
-                <span className="w-2 h-2 rounded-full bg-[var(--color-success)] animate-pulse" />
+              <span className="section-label badge-glow inline-flex items-center gap-2 px-4 py-1.5 rounded-full border bg-[var(--color-surface-elevated)]">
+                <span className="w-2 h-2 rounded-full bg-[var(--color-success)]">
+                  <span className="block w-2 h-2 rounded-full bg-[var(--color-success)] animate-ping" />
+                </span>
                 {settings.hero_title ? "Available for opportunities" : "Portfolio"}
               </span>
             </motion.div>
 
-            {/* Main Headline */}
+            {/* Main Headline with typewriter */}
             <motion.h1
               variants={fadeUp}
               className="text-[clamp(2.5rem,7vw,4.5rem)] font-black leading-[1.05] tracking-[-0.04em] mb-6"
             >
-              <span className="gradient-text">BUILDING WITH AI.</span>
+              <span className="gradient-text">
+                <TypewriterText text="BUILDING WITH AI." />
+              </span>
               <br />
               <span className="text-[var(--color-text-primary)]">LEARNING IN PUBLIC.</span>
             </motion.h1>
@@ -118,11 +204,49 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* ─── Stats Bar — Animated Counters ─────────────── */}
+      <SectionWrapper className="max-w-6xl mx-auto px-4 sm:px-6 pb-20">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6"
+        >
+          {[
+            { value: 10, suffix: "+", label: "Projects Built", icon: Rocket, color: "var(--color-brand)" },
+            { value: 33, suffix: "+", label: "Technologies", icon: Code2, color: "var(--color-accent)" },
+            { value: 3, suffix: "+", label: "AI/ML Apps", icon: Brain, color: "var(--color-success)" },
+            { value: 10, suffix: "+", label: "Live Demos", icon: Zap, color: "var(--color-warning)" },
+          ].map((stat, i) => (
+            <motion.div
+              key={stat.label}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.1, duration: 0.5 }}
+              className="relative glass-panel rounded-2xl p-6 text-center group hover:scale-[1.02] transition-transform duration-300"
+            >
+              <stat.icon size={20} className="mx-auto mb-3 opacity-60" style={{ color: stat.color }} />
+              <div className="text-3xl md:text-4xl font-black mb-1" style={{ color: stat.color }}>
+                <AnimatedCounter target={stat.value} suffix={stat.suffix} />
+              </div>
+              <p className="text-xs font-mono font-medium uppercase tracking-wider text-[var(--color-text-muted)]">
+                {stat.label}
+              </p>
+            </motion.div>
+          ))}
+        </motion.div>
+      </SectionWrapper>
+
       {/* ─── Currently Building ────────────────────────── */}
       {currentProject && (
-        <SectionWrapper className="max-w-6xl mx-auto px-6 pb-20">
-          <div className="card border-[var(--color-brand)]/20 bg-gradient-to-br from-[var(--color-surface-elevated)] to-[var(--color-brand-glow)]">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <SectionWrapper className="max-w-6xl mx-auto px-4 sm:px-6 pb-20">
+          <div className="card border-[var(--color-brand)]/20 bg-gradient-to-br from-[var(--color-surface-elevated)] to-[var(--color-brand-glow)] overflow-hidden animate-shimmer">
+            {/* Left accent bar */}
+            <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-[var(--color-brand)] to-[var(--color-accent)]" />
+            
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pl-4">
               <div className="flex items-start gap-4">
                 <div className="p-3 rounded-2xl bg-[var(--color-brand-glow)] text-[var(--color-brand)]">
                   <Brain size={24} />
@@ -168,7 +292,7 @@ export default function HomePage() {
       )}
 
       {/* ─── Now Section ───────────────────────────────── */}
-      <SectionWrapper className="max-w-6xl mx-auto px-6 pb-24" delay={0.1}>
+      <SectionWrapper className="max-w-6xl mx-auto px-4 sm:px-6 pb-24" delay={0.1}>
         <div className="mb-8">
           <span className="section-label">Now</span>
           <h2 className="section-title mt-2">What I&apos;m up to</h2>
@@ -226,7 +350,7 @@ export default function HomePage() {
       </SectionWrapper>
 
       {/* ─── Featured Projects ─────────────────────────── */}
-      <SectionWrapper className="max-w-6xl mx-auto px-6 pb-24" delay={0.1}>
+      <SectionWrapper className="max-w-6xl mx-auto px-4 sm:px-6 pb-24" delay={0.1}>
         <div className="flex items-end justify-between mb-8">
           <div>
             <span className="section-label">Project Lab</span>
@@ -251,7 +375,7 @@ export default function HomePage() {
                 transition={{ delay: i * 0.1, duration: 0.5 }}
               >
                 <Link href={`/work/${project.slug}`} className="block group">
-                  <div className="card h-full flex flex-col">
+                  <div className={`card h-full flex flex-col ${getCategoryAccent(project.category)} hover:shadow-xl hover:shadow-[var(--color-brand)]/5 hover:scale-[1.01] transition-all duration-300`}>
                     {/* Status */}
                     <div className="flex items-center justify-between mb-4">
                       <span className={`text-xs font-mono font-semibold status-${project.status}`}>
@@ -288,7 +412,8 @@ export default function HomePage() {
                     <div className="flex items-center gap-3 pt-3 border-t border-[var(--color-border-subtle)]">
                       {project.liveUrl && (
                         <span className="text-xs font-medium text-[var(--color-success)] flex items-center gap-1">
-                          <ExternalLink size={12} /> Live
+                          <span className="live-dot" style={{ width: 6, height: 6 }} />
+                          <span className="ml-1">Live</span>
                         </span>
                       )}
                       {project.githubUrl && (
@@ -324,7 +449,7 @@ export default function HomePage() {
 
       {/* ─── Build Log Preview ─────────────────────────── */}
       {buildLogs.length > 0 && (
-        <SectionWrapper className="max-w-6xl mx-auto px-6 pb-24" delay={0.1}>
+        <SectionWrapper className="max-w-6xl mx-auto px-4 sm:px-6 pb-24" delay={0.1}>
           <div className="mb-8">
             <span className="section-label">Build Log</span>
             <h2 className="section-title mt-2">Recent Updates</h2>
@@ -370,7 +495,7 @@ export default function HomePage() {
       )}
 
       {/* ─── CTA Section ───────────────────────────────── */}
-      <SectionWrapper className="max-w-6xl mx-auto px-6 pb-8">
+      <SectionWrapper className="max-w-6xl mx-auto px-4 sm:px-6 pb-8">
         <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[var(--color-brand)] to-[var(--color-brand-dark)] p-12 md:p-16 text-center text-white">
           <div className="absolute inset-0 opacity-10">
             <div className="absolute top-0 left-0 w-40 h-40 rounded-full bg-white blur-[80px]" />

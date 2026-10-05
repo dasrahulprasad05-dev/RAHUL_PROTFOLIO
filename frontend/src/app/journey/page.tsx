@@ -9,6 +9,9 @@ import {
   Trophy,
   Flag,
   Code,
+  Milestone,
+  Calendar,
+  Sparkles
 } from "lucide-react";
 import SectionWrapper from "@/components/SectionWrapper";
 import { api, type TimelineEvent } from "@/lib/api";
@@ -46,27 +49,33 @@ export default function JourneyPage() {
   const years = Object.keys(grouped).sort();
 
   return (
-    <div className="pt-24 pb-16">
-      <div className="max-w-4xl mx-auto px-6">
+    <div className="pt-8 pb-20">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6">
         {/* Header */}
         <SectionWrapper>
-          <div className="mb-16">
-            <span className="section-label">Journey</span>
-            <h1 className="section-title mt-2 mb-4">My Learning Path</h1>
-            <p className="text-[var(--color-text-secondary)] text-lg max-w-2xl">
-              A visual timeline of my growth — from writing my first line of
-              code to building AI-powered applications.
+          <div className="mb-10">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--color-brand-glow)] text-[var(--color-brand)] font-mono text-xs mb-3">
+              <Milestone size={14} /> Chronological Growth Timeline
+            </div>
+            <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-[var(--color-text-primary)] mb-3">
+              Engineering Learning Path
+            </h1>
+            <p className="text-[var(--color-text-secondary)] text-base sm:text-lg max-w-2xl leading-relaxed">
+              A chronological visual log of key breakthroughs, milestones, software builds, and academic achievements.
             </p>
           </div>
         </SectionWrapper>
 
-        {/* Legend */}
-        <SectionWrapper delay={0.1}>
-          <div className="flex flex-wrap gap-4 mb-12 p-4 rounded-2xl bg-[var(--color-surface-elevated)] border border-[var(--color-border)]">
+        {/* Category Legend Bar */}
+        <SectionWrapper delay={0.08}>
+          <div className="flex flex-wrap items-center gap-3 sm:gap-6 mb-12 p-3.5 sm:p-4 rounded-2xl bg-[var(--color-surface)] border border-[var(--color-border)]">
+            <span className="text-xs font-mono text-[var(--color-text-muted)] uppercase tracking-wider hidden sm:inline">
+              Event Types:
+            </span>
             {Object.entries(categoryIcons).map(([key, Icon]) => (
-              <div key={key} className="flex items-center gap-2 text-sm">
+              <div key={key} className="flex items-center gap-2 text-xs font-mono">
                 <div
-                  className="w-3 h-3 rounded-full"
+                  className="w-2.5 h-2.5 rounded-full"
                   style={{ backgroundColor: categoryColors[key] }}
                 />
                 <span className="text-[var(--color-text-secondary)] capitalize">{key}</span>
@@ -75,28 +84,28 @@ export default function JourneyPage() {
           </div>
         </SectionWrapper>
 
-        {/* Timeline */}
+        {/* Timeline Container */}
         <div className="relative">
-          {/* Vertical Line */}
-          <div className="absolute left-6 md:left-1/2 top-0 bottom-0 w-px bg-[var(--color-border)]" />
+          {/* Vertical Guide Line */}
+          <div className="absolute left-4 sm:left-6 md:left-1/2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-[var(--color-brand)] via-[var(--color-border)] to-[var(--color-border-subtle)] md:-translate-x-1/2" />
 
           {loaded ? (
-            years.map((year, yearIdx) => (
-              <div key={year} className="mb-16">
-                {/* Year Label */}
+            years.map((year) => (
+              <div key={year} className="mb-14 relative">
+                {/* Year Marker Badge */}
                 <motion.div
                   initial={{ opacity: 0, scale: 0.8 }}
                   whileInView={{ opacity: 1, scale: 1 }}
                   viewport={{ once: true }}
-                  className="relative flex justify-start md:justify-center mb-8"
+                  className="relative flex justify-start pl-1 md:pl-0 md:justify-center mb-8"
                 >
-                  <span className="relative z-10 px-6 py-2 rounded-full bg-[var(--color-brand)] text-white font-mono font-bold text-sm">
+                  <span className="relative z-10 px-5 py-1.5 rounded-full bg-[var(--color-brand)] text-black font-mono font-bold text-xs sm:text-sm shadow-md">
                     {year}
                   </span>
                 </motion.div>
 
-                {/* Events */}
-                <div className="space-y-8">
+                {/* Event Items */}
+                <div className="space-y-6 sm:space-y-8">
                   {grouped[year].map((event, i) => {
                     const Icon = categoryIcons[event.category] || Code;
                     const color = categoryColors[event.category] || "var(--color-brand)";
@@ -105,39 +114,53 @@ export default function JourneyPage() {
                     return (
                       <motion.div
                         key={event.id}
-                        initial={{ opacity: 0, x: isLeft ? -30 : 30 }}
-                        whileInView={{ opacity: 1, x: 0 }}
+                        initial={{ opacity: 0, y: 15 }}
+                        whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
-                        transition={{ delay: i * 0.05, duration: 0.5 }}
+                        transition={{ delay: i * 0.05, duration: 0.4 }}
                         className={`relative flex items-start gap-4 ${
                           isLeft
-                            ? "md:flex-row md:pr-[calc(50%+2rem)] pl-16 md:pl-0"
-                            : "md:flex-row-reverse md:pl-[calc(50%+2rem)] pl-16 md:pr-0"
+                            ? "md:flex-row md:pr-[calc(50%+1.5rem)] pl-12 sm:pl-16 md:pl-0"
+                            : "md:flex-row-reverse md:pl-[calc(50%+1.5rem)] pl-12 sm:pl-16 md:pr-0"
                         }`}
                       >
-                        {/* Dot on the line */}
+                        {/* Node Dot on the Vertical Line */}
                         <div
-                          className="absolute left-4 md:left-1/2 md:-translate-x-1/2 w-5 h-5 rounded-full border-4 border-[var(--color-surface)] z-10"
+                          className="absolute left-2.5 sm:left-4.5 md:left-1/2 md:-translate-x-1/2 top-3 w-4 h-4 rounded-full border-2 border-[var(--color-surface)] z-10 shadow-sm"
                           style={{ backgroundColor: color }}
                         />
 
-                        {/* Card */}
-                        <div className="card flex-1">
+                        {/* Event Card */}
+                        <div className="card p-4 sm:p-5 flex-1 border-[var(--color-border)] bg-[var(--color-surface)] hover:border-[var(--color-brand)]/60 hover:shadow-lg transition-all">
                           <div className="flex items-start gap-3">
                             <div
-                              className="flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center"
+                              className="flex-shrink-0 w-8 h-8 rounded-xl flex items-center justify-center mt-0.5"
                               style={{ backgroundColor: `${color}15`, color }}
                             >
                               <Icon size={16} />
                             </div>
                             <div className="flex-1 min-w-0">
-                              {event.month && (
-                                <span className="text-xs font-mono text-[var(--color-text-muted)]">
-                                  {event.month} {event.year}
+                              <div className="flex items-center justify-between gap-2 mb-1">
+                                {event.month ? (
+                                  <span className="text-[11px] font-mono text-[var(--color-text-muted)]">
+                                    {event.month} {event.year}
+                                  </span>
+                                ) : (
+                                  <span className="text-[11px] font-mono text-[var(--color-text-muted)]">
+                                    {event.year}
+                                  </span>
+                                )}
+                                <span
+                                  className="text-[10px] font-mono uppercase px-2 py-0.5 rounded-full"
+                                  style={{ backgroundColor: `${color}15`, color }}
+                                >
+                                  {event.category}
                                 </span>
-                              )}
-                              <h3 className="font-bold text-sm mb-1">{event.title}</h3>
-                              <p className="text-sm text-[var(--color-text-secondary)] leading-relaxed">
+                              </div>
+                              <h3 className="font-bold text-sm sm:text-base text-[var(--color-text-primary)] mb-1">
+                                {event.title}
+                              </h3>
+                              <p className="text-xs sm:text-sm text-[var(--color-text-secondary)] leading-relaxed">
                                 {event.description}
                               </p>
                             </div>
@@ -150,9 +173,9 @@ export default function JourneyPage() {
               </div>
             ))
           ) : (
-            <div className="space-y-8 pl-16">
-              {Array(5).fill(null).map((_, i) => (
-                <div key={i} className="card animate-pulse">
+            <div className="space-y-6 pl-12 sm:pl-16">
+              {Array(4).fill(null).map((_, i) => (
+                <div key={i} className="card animate-pulse p-4 bg-[var(--color-surface)] border-[var(--color-border)]">
                   <div className="h-4 w-24 bg-[var(--color-surface-alt)] rounded mb-2" />
                   <div className="h-5 w-3/4 bg-[var(--color-surface-alt)] rounded mb-2" />
                   <div className="h-4 w-full bg-[var(--color-surface-alt)] rounded" />
