@@ -24,8 +24,9 @@ export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 20);
+    const handleScroll = () => setScrolled(window.scrollY > 8);
     window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
@@ -45,16 +46,9 @@ export default function Navbar() {
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-          scrolled
-            ? "backdrop-blur-xl border-b border-[var(--color-border)] shadow-sm"
-            : "md:bg-transparent backdrop-blur-md md:backdrop-blur-none border-b border-[var(--color-border-subtle)] md:border-b-0"
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-200 ${
+          scrolled ? "nav-glass-scrolled" : "nav-glass"
         }`}
-        style={{
-          backgroundColor: scrolled
-            ? 'color-mix(in srgb, var(--color-surface) 85%, transparent)'
-            : 'color-mix(in srgb, var(--color-surface) 60%, transparent)',
-        }}
       >
         <nav className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           {/* Logo */}
@@ -153,8 +147,7 @@ export default function Navbar() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-x-0 top-16 bottom-0 z-[45] backdrop-blur-2xl md:hidden overflow-y-auto flex flex-col justify-between p-6"
-            style={{ backgroundColor: 'color-mix(in srgb, var(--color-surface) 98%, transparent)' }}
+            className="fixed inset-x-0 top-16 bottom-0 z-[45] mobile-menu-glass md:hidden overflow-y-auto flex flex-col justify-between p-6"
           >
             <nav className="flex flex-col gap-2 w-full pt-2">
               {navLinks.map((link, i) => {
