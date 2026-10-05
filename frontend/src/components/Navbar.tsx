@@ -153,7 +153,7 @@ export default function Navbar() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-x-0 top-16 bottom-0 z-40 backdrop-blur-2xl md:hidden overflow-y-auto flex flex-col justify-between p-6"
+            className="fixed inset-x-0 top-16 bottom-0 z-[45] backdrop-blur-2xl md:hidden overflow-y-auto flex flex-col justify-between p-6"
             style={{ backgroundColor: 'color-mix(in srgb, var(--color-surface) 98%, transparent)' }}
           >
             <nav className="flex flex-col gap-2 w-full pt-2">

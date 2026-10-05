@@ -512,7 +512,8 @@ export default function HomePage() {
             <div className="flex flex-wrap justify-center gap-4">
               <Link
                 href="/contact"
-                className="btn bg-white text-[var(--color-brand-dark)] hover:bg-white/90 font-bold"
+                className="btn font-bold hover:opacity-90"
+                style={{ backgroundColor: 'white', color: '#4F46E5' }}
               >
                 Get in touch <ArrowRight size={16} />
               </Link>

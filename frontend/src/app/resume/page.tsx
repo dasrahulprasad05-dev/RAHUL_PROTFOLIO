@@ -56,7 +56,7 @@ export default function ResumePage() {
   };
 
   return (
-    <div className="pt-8 pb-20">
+    <div className="pb-20">
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
         {/* Top Action Bar */}
         <SectionWrapper>

@@ -105,7 +105,7 @@ export default function Footer() {
       {showScrollTop && (
         <button
           onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-          className="fixed bottom-8 right-8 p-3 rounded-full bg-[var(--color-brand)] text-white shadow-lg hover:bg-[var(--color-brand-dark)] transition-all z-50 animate-fade-in"
+          className="fixed bottom-8 right-8 p-3 rounded-full bg-[var(--color-brand)] text-white shadow-lg hover:bg-[var(--color-brand-dark)] transition-all z-30 animate-fade-in"
           aria-label="Scroll to top"
         >
           <ArrowUp size={20} />
