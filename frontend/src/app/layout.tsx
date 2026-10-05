@@ -54,7 +54,7 @@ export default function RootLayout({
       <body className="noise-bg">
         <ThemeProvider>
           <Navbar />
-          <main className="min-h-screen pt-16">{children}</main>
+          <main className="min-h-screen pt-20">{children}</main>
           <Footer />
         </ThemeProvider>
       </body>

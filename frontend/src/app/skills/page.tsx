@@ -92,7 +92,7 @@ export default function SkillsPage() {
                   onClick={() => setActiveCategory(cat)}
                   className={`relative px-4 py-2 rounded-xl text-xs sm:text-sm font-medium whitespace-nowrap transition-colors ${
                     active
-                      ? "text-black font-semibold"
+                      ? "text-white font-semibold"
                       : "text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-surface-alt)]"
                   }`}
                 >

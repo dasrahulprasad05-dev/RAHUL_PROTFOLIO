@@ -11,7 +11,7 @@ interface SectionWrapperProps {
 
 export default function SectionWrapper({ children, className = "", delay = 0 }: SectionWrapperProps) {
   const ref = useRef<HTMLDivElement>(null);
-  const isInView = useInView(ref, { once: true, margin: "-80px" });
+  const isInView = useInView(ref, { once: true, margin: "0px 0px -40px 0px" });
   const controls = useAnimation();
 
   useEffect(() => {
@@ -26,12 +26,12 @@ export default function SectionWrapper({ children, className = "", delay = 0 }: 
       initial="hidden"
       animate={controls}
       variants={{
-        hidden: { opacity: 0, y: 30 },
+        hidden: { opacity: 0, y: 20 },
         visible: {
           opacity: 1,
           y: 0,
           transition: {
-            duration: 0.6,
+            duration: 0.5,
             delay,
             ease: [0.16, 1, 0.3, 1],
           },

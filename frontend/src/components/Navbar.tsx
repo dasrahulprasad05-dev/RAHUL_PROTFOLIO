@@ -47,9 +47,14 @@ export default function Navbar() {
         transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
           scrolled
-            ? "bg-[var(--color-surface)]/85 backdrop-blur-xl border-b border-[var(--color-border)] shadow-sm"
-            : "bg-[var(--color-surface)]/60 md:bg-transparent backdrop-blur-md md:backdrop-blur-none border-b border-[var(--color-border-subtle)] md:border-b-0"
+            ? "backdrop-blur-xl border-b border-[var(--color-border)] shadow-sm"
+            : "md:bg-transparent backdrop-blur-md md:backdrop-blur-none border-b border-[var(--color-border-subtle)] md:border-b-0"
         }`}
+        style={{
+          backgroundColor: scrolled
+            ? 'color-mix(in srgb, var(--color-surface) 85%, transparent)'
+            : 'color-mix(in srgb, var(--color-surface) 60%, transparent)',
+        }}
       >
         <nav className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           {/* Logo */}
@@ -72,7 +77,7 @@ export default function Navbar() {
                   className={`relative px-3 lg:px-4 py-2 text-xs lg:text-sm font-medium rounded-lg transition-colors ${
                     isActive
                       ? "text-[var(--color-brand)] font-semibold"
-                      : "text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]"
+                      : "text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-surface-alt)]"
                   }`}
                 >
                   {link.label}
@@ -144,26 +149,27 @@ export default function Navbar() {
       <AnimatePresence>
         {mobileOpen && (
           <motion.div
-            initial={{ opacity: 0, y: -10 }}
+            initial={{ opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
+            exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-40 bg-[var(--color-surface)]/98 backdrop-blur-2xl md:hidden pt-20 px-6 flex flex-col justify-between pb-10"
+            className="fixed inset-x-0 top-16 bottom-0 z-40 backdrop-blur-2xl md:hidden overflow-y-auto flex flex-col justify-between p-6"
+            style={{ backgroundColor: 'color-mix(in srgb, var(--color-surface) 98%, transparent)' }}
           >
-            <nav className="flex flex-col gap-2 mt-4">
+            <nav className="flex flex-col gap-2 w-full pt-2">
               {navLinks.map((link, i) => {
-                const isActive = pathname === link.href || pathname.startsWith(link.href + "/");
+                const isActive = pathname === link.href || (link.href !== "/" && pathname.startsWith(link.href + "/"));
                 return (
                   <motion.div
                     key={link.href}
-                    initial={{ opacity: 0, x: -15 }}
+                    initial={{ opacity: 0, x: -12 }}
                     animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: i * 0.05 }}
+                    transition={{ delay: i * 0.04 }}
                   >
                     <Link
                       href={link.href}
                       onClick={() => setMobileOpen(false)}
-                      className={`flex items-center justify-between p-3.5 rounded-xl font-mono text-lg font-semibold transition-colors ${
+                      className={`flex items-center justify-between p-3.5 rounded-xl font-mono text-base sm:text-lg font-semibold transition-colors ${
                         isActive
                           ? "bg-[var(--color-brand-glow)] text-[var(--color-brand)]"
                           : "text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-surface-alt)]"
@@ -177,15 +183,15 @@ export default function Navbar() {
               })}
 
               <motion.div
-                initial={{ opacity: 0, x: -15 }}
+                initial={{ opacity: 0, x: -12 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: navLinks.length * 0.05 }}
+                transition={{ delay: navLinks.length * 0.04 }}
                 className="pt-2"
               >
                 <Link
                   href="/resume"
                   onClick={() => setMobileOpen(false)}
-                  className="flex items-center justify-between p-3.5 rounded-xl font-mono text-lg font-semibold text-[var(--color-text-secondary)] hover:text-[var(--color-brand)] hover:bg-[var(--color-surface-alt)] transition-colors border border-[var(--color-border-subtle)]"
+                  className="flex items-center justify-between p-3.5 rounded-xl font-mono text-base sm:text-lg font-semibold text-[var(--color-text-secondary)] hover:text-[var(--color-brand)] hover:bg-[var(--color-surface-alt)] transition-colors border border-[var(--color-border-subtle)]"
                 >
                   <span>Resume</span>
                   <ArrowUpRight size={18} />
@@ -193,14 +199,14 @@ export default function Navbar() {
               </motion.div>
             </nav>
 
-            <div className="pt-6 border-t border-[var(--color-border)] flex items-center justify-between text-xs font-mono text-[var(--color-text-muted)]">
+            <div className="pt-6 mt-6 border-t border-[var(--color-border)] flex items-center justify-between text-xs font-mono text-[var(--color-text-muted)]">
               <span>© {new Date().getFullYear()} Rahul Prasad Das</span>
               <div className="flex items-center gap-3">
                 <a
                   href="https://github.com/dasrahulprasad05-dev"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="hover:text-[var(--color-brand)]"
+                  className="p-1.5 rounded-lg hover:text-[var(--color-brand)] hover:bg-[var(--color-surface-alt)] transition-colors"
                   aria-label="GitHub"
                 >
                   <Github size={18} />
@@ -209,7 +215,7 @@ export default function Navbar() {
                   href="https://linkedin.com/in/rahul-prasad-das"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="hover:text-[var(--color-brand)]"
+                  className="p-1.5 rounded-lg hover:text-[var(--color-brand)] hover:bg-[var(--color-surface-alt)] transition-colors"
                   aria-label="LinkedIn"
                 >
                   <Linkedin size={18} />

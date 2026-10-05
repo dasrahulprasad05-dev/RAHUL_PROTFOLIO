@@ -53,10 +53,10 @@ export default function WorkPage() {
   return (
     <div className="pt-8 pb-20">
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
-        {/* Header */}
+        {/* Header & Filter Bar */}
         <SectionWrapper>
-          <div className="mb-10">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--color-brand-glow)] text-[var(--color-brand)] font-mono text-xs mb-3">
+          <div className="mb-8">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[var(--color-brand-glow)] text-[var(--color-brand)] font-mono text-xs mb-3">
               <FolderGit2 size={14} /> Production Systems & Experiments
             </div>
             <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-[var(--color-text-primary)] mb-3">
@@ -66,11 +66,8 @@ export default function WorkPage() {
               Explore intelligent systems, machine learning prototypes, and full-stack software built with Next.js, FastAPI, and PyTorch.
             </p>
           </div>
-        </SectionWrapper>
 
-        {/* Search & Category Filter Bar */}
-        <SectionWrapper delay={0.08}>
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 mb-8">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 mb-4">
             {/* Search Input */}
             <div className="relative flex-1 max-w-md">
               <Search
@@ -87,7 +84,7 @@ export default function WorkPage() {
             </div>
 
             {/* Category Filter Pills */}
-            <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 scrollbar-none">
+            <div className="flex items-center gap-2 overflow-x-auto py-2 sm:py-0 scrollbar-none">
               {categories.map((cat) => {
                 const active = activeCategory === cat;
                 const count = getCategoryCount(cat);
@@ -97,7 +94,7 @@ export default function WorkPage() {
                     onClick={() => setActiveCategory(cat)}
                     className={`relative px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium whitespace-nowrap transition-colors flex items-center gap-1.5 ${
                       active
-                        ? "text-black font-semibold"
+                        ? "text-white font-semibold"
                         : "text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-surface-alt)]"
                     }`}
                   >
@@ -112,7 +109,7 @@ export default function WorkPage() {
                     <span
                       className={`relative z-10 text-[10px] px-1.5 py-0.2 rounded-full font-mono ${
                         active
-                          ? "bg-black/20 text-black font-bold"
+                          ? "bg-white/25 text-white font-bold"
                           : "bg-[var(--color-surface-alt)] text-[var(--color-text-muted)]"
                       }`}
                     >
@@ -123,25 +120,25 @@ export default function WorkPage() {
               })}
             </div>
           </div>
-        </SectionWrapper>
 
-        {/* Filter Summary */}
-        <div className="flex items-center justify-between text-xs font-mono text-[var(--color-text-muted)] mb-6 px-1">
-          <span>
-            Showing <strong className="text-[var(--color-brand)]">{filtered.length}</strong> of {projects.length} projects
-          </span>
-          {(searchQuery || activeCategory !== "All") && (
-            <button
-              onClick={() => {
-                setActiveCategory("All");
-                setSearchQuery("");
-              }}
-              className="text-[var(--color-brand)] hover:underline"
-            >
-              Reset all filters
-            </button>
-          )}
-        </div>
+          {/* Filter Summary */}
+          <div className="flex items-center justify-between text-xs font-mono text-[var(--color-text-muted)] mt-4 mb-8 px-1">
+            <span>
+              Showing <strong className="text-[var(--color-brand)]">{filtered.length}</strong> of {projects.length} projects
+            </span>
+            {(searchQuery || activeCategory !== "All") && (
+              <button
+                onClick={() => {
+                  setActiveCategory("All");
+                  setSearchQuery("");
+                }}
+                className="text-[var(--color-brand)] hover:underline"
+              >
+                Reset all filters
+              </button>
+            )}
+          </div>
+        </SectionWrapper>
 
         {/* Projects Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
