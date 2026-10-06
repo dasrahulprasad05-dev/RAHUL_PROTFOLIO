@@ -83,9 +83,11 @@ export default function ResumePage() {
                 <Printer size={15} /> Print
               </button>
               <a
-                href={settings.resume_url || "/resume.pdf"}
+                href={settings.resume_url?.startsWith("http") ? settings.resume_url : "/resume.pdf"}
+                download={settings.resume_url?.startsWith("http") ? undefined : "Rahul_Prasad_Das_Resume.pdf"}
+                target={settings.resume_url?.startsWith("http") ? "_blank" : undefined}
+                rel="noopener noreferrer"
                 className="btn btn-primary text-sm shadow-lg shadow-[var(--color-brand)]/20 inline-flex items-center gap-2"
-                download
               >
                 <Download size={16} /> Download PDF
               </a>

@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { useEffect, useState, useRef } from "react";
+import { motion, useScroll, useSpring } from "framer-motion";
 import {
   GraduationCap,
   Zap,
@@ -10,8 +10,6 @@ import {
   Flag,
   Code,
   Milestone,
-  Calendar,
-  Sparkles
 } from "lucide-react";
 import SectionWrapper from "@/components/SectionWrapper";
 import { api, type TimelineEvent } from "@/lib/api";
@@ -32,9 +30,107 @@ const categoryColors: Record<string, string> = {
   milestone: "var(--color-error)",
 };
 
+function TimelineCard({
+  event,
+  isLeft,
+}: {
+  event: TimelineEvent;
+  isLeft: boolean;
+}) {
+  const Icon = categoryIcons[event.category] || Code;
+  const color = categoryColors[event.category] || "var(--color-brand)";
+
+  return (
+    <div
+      className={`relative flex items-start gap-4 ${
+        isLeft
+          ? "md:flex-row md:pr-[calc(50%+1.5rem)] pl-12 sm:pl-16 md:pl-0"
+          : "md:flex-row-reverse md:pl-[calc(50%+1.5rem)] pl-12 sm:pl-16 md:pr-0"
+      }`}
+    >
+      {/* Node Dot on the Vertical Line — Pops when milestone is scrolled to */}
+      <motion.div
+        initial={{ scale: 0, opacity: 0 }}
+        whileInView={{ scale: 1, opacity: 1 }}
+        viewport={{ once: true, amount: 0.2, margin: "-60px 0px" }}
+        transition={{ duration: 0.4, type: "spring", stiffness: 300, damping: 20 }}
+        className="absolute left-2.5 sm:left-4.5 md:left-1/2 md:-translate-x-1/2 top-4 w-4 h-4 rounded-full border-2 border-[var(--color-surface)] z-10 shadow-md flex items-center justify-center"
+        style={{ backgroundColor: color }}
+      >
+        <span className="w-1.5 h-1.5 rounded-full bg-white opacity-90" />
+      </motion.div>
+
+      {/* Event Card — Reveals one by one when scrolled into view */}
+      <motion.div
+        initial={{
+          opacity: 0,
+          y: 35,
+          scale: 0.96,
+        }}
+        whileInView={{
+          opacity: 1,
+          y: 0,
+          scale: 1,
+        }}
+        viewport={{ once: true, amount: 0.25, margin: "-60px 0px" }}
+        transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
+        className="flex-1 w-full"
+      >
+        <div className="card p-4 sm:p-5 border-[var(--color-border)] bg-[var(--color-surface)] hover:border-[var(--color-brand)]/60 hover:shadow-xl hover:shadow-[var(--color-brand)]/5 hover:-translate-y-1 transition-all duration-300 group">
+          <div className="flex items-start gap-3">
+            <div
+              className="flex-shrink-0 w-8 h-8 rounded-xl flex items-center justify-center mt-0.5 transition-transform group-hover:scale-110"
+              style={{ backgroundColor: `${color}15`, color }}
+            >
+              <Icon size={16} />
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center justify-between gap-2 mb-1">
+                {event.month ? (
+                  <span className="text-[11px] font-mono text-[var(--color-text-muted)]">
+                    {event.month} {event.year}
+                  </span>
+                ) : (
+                  <span className="text-[11px] font-mono text-[var(--color-text-muted)]">
+                    {event.year}
+                  </span>
+                )}
+                <span
+                  className="text-[10px] font-mono uppercase px-2 py-0.5 rounded-full font-semibold"
+                  style={{ backgroundColor: `${color}15`, color }}
+                >
+                  {event.category}
+                </span>
+              </div>
+              <h3 className="font-bold text-sm sm:text-base text-[var(--color-text-primary)] mb-1 group-hover:text-[var(--color-brand)] transition-colors">
+                {event.title}
+              </h3>
+              <p className="text-xs sm:text-sm text-[var(--color-text-secondary)] leading-relaxed">
+                {event.description}
+              </p>
+            </div>
+          </div>
+        </div>
+      </motion.div>
+    </div>
+  );
+}
+
 export default function JourneyPage() {
   const [grouped, setGrouped] = useState<Record<string, TimelineEvent[]>>({});
   const [loaded, setLoaded] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start 80%", "end 85%"],
+  });
+
+  const scaleY = useSpring(scrollYProgress, {
+    stiffness: 100,
+    damping: 30,
+    restDelta: 0.001,
+  });
 
   useEffect(() => {
     api.getTimeline()
@@ -85,18 +181,24 @@ export default function JourneyPage() {
         </SectionWrapper>
 
         {/* Timeline Container */}
-        <div className="relative">
-          {/* Vertical Guide Line */}
-          <div className="absolute left-4 sm:left-6 md:left-1/2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-[var(--color-brand)] via-[var(--color-border)] to-[var(--color-border-subtle)] md:-translate-x-1/2" />
+        <div ref={containerRef} className="relative">
+          {/* Vertical Guide Line (Base) */}
+          <div className="absolute left-4 sm:left-6 md:left-1/2 top-0 bottom-0 w-0.5 bg-[var(--color-border)] md:-translate-x-1/2" />
+          {/* Vertical Guide Line (Animated Fill on Scroll) */}
+          <motion.div
+            style={{ scaleY, transformOrigin: "top" }}
+            className="absolute left-4 sm:left-6 md:left-1/2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-[var(--color-brand)] via-[var(--color-accent)] to-[var(--color-success)] md:-translate-x-1/2 z-0"
+          />
 
           {loaded ? (
             years.map((year) => (
               <div key={year} className="mb-14 relative">
-                {/* Year Marker Badge */}
+                {/* Year Marker Badge — Reveals on scroll */}
                 <motion.div
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true }}
+                  initial={{ opacity: 0, scale: 0.85, y: 15 }}
+                  whileInView={{ opacity: 1, scale: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-40px 0px" }}
+                  transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
                   className="relative flex justify-start pl-1 md:pl-0 md:justify-center mb-8"
                 >
                   <span className="relative z-10 px-5 py-1.5 rounded-full bg-[var(--color-brand)] text-black font-mono font-bold text-xs sm:text-sm shadow-md">
@@ -104,71 +206,15 @@ export default function JourneyPage() {
                   </span>
                 </motion.div>
 
-                {/* Event Items */}
+                {/* Event Items — Each revealed one by one as the user scrolls */}
                 <div className="space-y-6 sm:space-y-8">
-                  {grouped[year].map((event, i) => {
-                    const Icon = categoryIcons[event.category] || Code;
-                    const color = categoryColors[event.category] || "var(--color-brand)";
-                    const isLeft = i % 2 === 0;
-
-                    return (
-                      <motion.div
-                        key={event.id}
-                        initial={{ opacity: 0, y: 15 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ delay: i * 0.05, duration: 0.4 }}
-                        className={`relative flex items-start gap-4 ${
-                          isLeft
-                            ? "md:flex-row md:pr-[calc(50%+1.5rem)] pl-12 sm:pl-16 md:pl-0"
-                            : "md:flex-row-reverse md:pl-[calc(50%+1.5rem)] pl-12 sm:pl-16 md:pr-0"
-                        }`}
-                      >
-                        {/* Node Dot on the Vertical Line */}
-                        <div
-                          className="absolute left-2.5 sm:left-4.5 md:left-1/2 md:-translate-x-1/2 top-3 w-4 h-4 rounded-full border-2 border-[var(--color-surface)] z-10 shadow-sm"
-                          style={{ backgroundColor: color }}
-                        />
-
-                        {/* Event Card */}
-                        <div className="card p-4 sm:p-5 flex-1 border-[var(--color-border)] bg-[var(--color-surface)] hover:border-[var(--color-brand)]/60 hover:shadow-lg transition-all">
-                          <div className="flex items-start gap-3">
-                            <div
-                              className="flex-shrink-0 w-8 h-8 rounded-xl flex items-center justify-center mt-0.5"
-                              style={{ backgroundColor: `${color}15`, color }}
-                            >
-                              <Icon size={16} />
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center justify-between gap-2 mb-1">
-                                {event.month ? (
-                                  <span className="text-[11px] font-mono text-[var(--color-text-muted)]">
-                                    {event.month} {event.year}
-                                  </span>
-                                ) : (
-                                  <span className="text-[11px] font-mono text-[var(--color-text-muted)]">
-                                    {event.year}
-                                  </span>
-                                )}
-                                <span
-                                  className="text-[10px] font-mono uppercase px-2 py-0.5 rounded-full"
-                                  style={{ backgroundColor: `${color}15`, color }}
-                                >
-                                  {event.category}
-                                </span>
-                              </div>
-                              <h3 className="font-bold text-sm sm:text-base text-[var(--color-text-primary)] mb-1">
-                                {event.title}
-                              </h3>
-                              <p className="text-xs sm:text-sm text-[var(--color-text-secondary)] leading-relaxed">
-                                {event.description}
-                              </p>
-                            </div>
-                          </div>
-                        </div>
-                      </motion.div>
-                    );
-                  })}
+                  {grouped[year].map((event, i) => (
+                    <TimelineCard
+                      key={event.id}
+                      event={event}
+                      isLeft={i % 2 === 0}
+                    />
+                  ))}
                 </div>
               </div>
             ))

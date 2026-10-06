@@ -3,7 +3,7 @@
 import { Github } from "@/components/Icons";
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
-import { motion, useInView } from "framer-motion";
+import { motion, useInView, animate } from "framer-motion";
 import {
   ArrowRight, Brain, Sparkles, BookOpen, Target, ExternalLink, ChevronRight,
   Zap, Code2, Layers, Rocket
@@ -33,28 +33,28 @@ function AnimatedCounter({ target, suffix = "" }: { target: number; suffix?: str
 
   useEffect(() => {
     if (!isInView) return;
-    let start = 0;
-    const duration = 1500;
-    const step = Math.max(1, Math.floor(target / 60));
-    const interval = duration / (target / step);
+    const controls = animate(0, target, {
+      duration: 1.8,
+      ease: [0.16, 1, 0.3, 1],
+      onUpdate: (latest) => {
+        setCount(Math.round(latest));
+      },
+    });
 
-    const timer = setInterval(() => {
-      start += step;
-      if (start >= target) {
-        setCount(target);
-        clearInterval(timer);
-      } else {
-        setCount(start);
-      }
-    }, interval);
-
-    return () => clearInterval(timer);
+    return () => controls.stop();
   }, [isInView, target]);
 
   return (
-    <span ref={ref} className="counter-number">
-      {count}{suffix}
-    </span>
+    <motion.span
+      ref={ref}
+      initial={{ opacity: 0, y: 12, scale: 0.95 }}
+      animate={isInView ? { opacity: 1, y: 0, scale: 1 } : {}}
+      transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+      className="counter-number inline-block tabular-nums"
+    >
+      {count}
+      <span className="text-[var(--color-brand)]">{suffix}</span>
+    </motion.span>
   );
 }
 
