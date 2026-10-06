@@ -16,6 +16,7 @@ import {
   Menu,
   X,
   ChevronRight,
+  Bot,
 } from "lucide-react";
 import { adminApi, type User } from "@/lib/api";
 
@@ -26,6 +27,7 @@ const sidebarLinks = [
   { href: "/admin/education", label: "Education", icon: GraduationCap },
   { href: "/admin/achievements", label: "Achievements", icon: Trophy },
   { href: "/admin/messages", label: "Messages", icon: MessageSquare },
+  { href: "/admin/chat", label: "AI Chat Logs", icon: Bot },
   { href: "/admin/build-log", label: "Build Log", icon: Clock },
   { href: "/admin/settings", label: "Settings", icon: Settings },
 ];

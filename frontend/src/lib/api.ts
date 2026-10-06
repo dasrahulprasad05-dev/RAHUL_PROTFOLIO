@@ -160,6 +160,78 @@ export const api = {
       method: "POST",
       body: JSON.stringify({ page, referrer: typeof document !== "undefined" ? document.referrer : "" }),
     }).catch(() => {}), // Silent fail for analytics
+
+  // Chat
+  sendChatMessageStream: async ({
+    messages,
+    onToken,
+    onDone,
+    onError,
+  }: {
+    messages: { role: "user" | "assistant"; content: string }[];
+    onToken: (token: string) => void;
+    onDone: (sources: ChatSource[]) => void;
+    onError: (error: string) => void;
+  }): Promise<void> => {
+    try {
+      const res = await fetch(`${API_BASE}/chat`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ messages }),
+      });
+
+      if (!res.ok) {
+        const errorJson = await res.json().catch(() => ({ error: "Failed to connect to chat assistant." }));
+        if (res.status === 429) {
+          onError("Rate limit exceeded. You can send up to 20 messages per hour. Please try again later.");
+        } else {
+          onError(errorJson.error || "The AI assistant is temporarily unavailable. Please try again shortly.");
+        }
+        return;
+      }
+
+      if (!res.body) {
+        onError("No response stream available.");
+        return;
+      }
+
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = "";
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split("\n");
+        buffer = lines.pop() || "";
+
+        for (const line of lines) {
+          const trimmed = line.trim();
+          if (trimmed.startsWith("data: ")) {
+            const dataStr = trimmed.slice(6);
+            try {
+              const data = JSON.parse(dataStr);
+              if (data.token) {
+                onToken(data.token);
+              }
+              if (data.done) {
+                onDone(data.sources || []);
+              }
+              if (data.error) {
+                onError(data.error);
+              }
+            } catch {
+              // Ignore partial SSE JSON chunks
+            }
+          }
+        }
+      }
+    } catch (err: unknown) {
+      onError(err instanceof Error ? err.message : "Network error connecting to AI assistant.");
+    }
+  },
 };
 
 // ─── Admin API ────────────────────────────────────────────
@@ -242,9 +314,56 @@ export const adminApi = {
 
   // Analytics
   getAnalytics: () => fetchAPI<AnalyticsData>("/analytics"),
+
+  // Chat Logs
+  getChatLogs: (params?: { page?: number; limit?: number; answered?: string }) => {
+    const q = new URLSearchParams();
+    if (params?.page) q.append("page", String(params.page));
+    if (params?.limit) q.append("limit", String(params.limit));
+    if (params?.answered && params.answered !== "all") q.append("answered", params.answered);
+    const query = q.toString() ? `?${q.toString()}` : "";
+    return fetchAPI<ChatLogsResponse>(`/admin/chat-logs${query}`);
+  },
+
+  deleteChatLog: (id: string) => {
+    return fetchAPI<{ message: string }>(`/admin/chat-logs/${id}`, { method: "DELETE" });
+  },
 };
 
 // ─── Types ────────────────────────────────────────────────
+
+export interface ChatSource {
+  type: "project" | "section" | "link";
+  title: string;
+  url: string;
+}
+
+export interface ChatMessage {
+  id?: string;
+  role: "user" | "assistant";
+  content: string;
+  sources?: ChatSource[];
+  isStreaming?: boolean;
+}
+
+export interface ChatLogItem {
+  id: string;
+  question: string;
+  answer: string;
+  sources: ChatSource[];
+  answered: boolean;
+  createdAt: string;
+}
+
+export interface ChatLogsResponse {
+  logs: ChatLogItem[];
+  pagination: {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  };
+}
 
 export interface User {
   id: string;
