@@ -7,6 +7,8 @@ import { errorHandler } from "./middleware/errorHandler.js";
 import authRoutes from "./routes/auth.js";
 import projectRoutes from "./routes/projects.js";
 import contentRoutes from "./routes/content.js";
+import chatRoutes from "./routes/chat.js";
+import adminChatRoutes from "./routes/adminChat.js";
 
 const app = express();
 
@@ -27,7 +29,7 @@ app.use(cors({
     ) {
       return callback(null, true);
     }
-    return callback(null, true);
+    return callback(new Error("Not allowed by CORS"));
   },
   credentials: true,
 }));
@@ -54,6 +56,8 @@ app.use("/api/messages", contactLimiter);
 // ─── Routes ───────────────────────────────────────────────
 app.use("/api/auth", authRoutes);
 app.use("/api/projects", projectRoutes);
+app.use("/api/chat", chatRoutes);
+app.use("/api/admin/chat-logs", adminChatRoutes);
 app.use("/api", contentRoutes);
 
 // Health check

@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import prisma from "../config/database.js";
+import { invalidateKnowledgeCache } from "../chat/knowledge.js";
 
 // ─── Messages ─────────────────────────────────────────────
 
@@ -86,6 +87,7 @@ export async function getTimeline(_req: Request, res: Response): Promise<void> {
 export async function createTimelineEvent(req: Request, res: Response): Promise<void> {
   try {
     const event = await prisma.timelineEvent.create({ data: req.body });
+    invalidateKnowledgeCache();
     res.status(201).json(event);
   } catch (error) {
     console.error("Create timeline event error:", error);
@@ -99,6 +101,7 @@ export async function updateTimelineEvent(req: Request, res: Response): Promise<
       where: { id: req.params.id as string },
       data: req.body,
     });
+    invalidateKnowledgeCache();
     res.json(event);
   } catch (error) {
     console.error("Update timeline event error:", error);
@@ -109,6 +112,7 @@ export async function updateTimelineEvent(req: Request, res: Response): Promise<
 export async function deleteTimelineEvent(req: Request, res: Response): Promise<void> {
   try {
     await prisma.timelineEvent.delete({ where: { id: req.params.id as string } });
+    invalidateKnowledgeCache();
     res.json({ message: "Timeline event deleted" });
   } catch (error) {
     console.error("Delete timeline event error:", error);
@@ -146,6 +150,7 @@ export async function getAllBuildLogs(_req: Request, res: Response): Promise<voi
 export async function createBuildLog(req: Request, res: Response): Promise<void> {
   try {
     const log = await prisma.buildLog.create({ data: req.body });
+    invalidateKnowledgeCache();
     res.status(201).json(log);
   } catch (error) {
     console.error("Create build log error:", error);
@@ -159,6 +164,7 @@ export async function updateBuildLog(req: Request, res: Response): Promise<void>
       where: { id: req.params.id as string },
       data: req.body,
     });
+    invalidateKnowledgeCache();
     res.json(log);
   } catch (error) {
     console.error("Update build log error:", error);
@@ -169,6 +175,7 @@ export async function updateBuildLog(req: Request, res: Response): Promise<void>
 export async function deleteBuildLog(req: Request, res: Response): Promise<void> {
   try {
     await prisma.buildLog.delete({ where: { id: req.params.id as string } });
+    invalidateKnowledgeCache();
     res.json({ message: "Build log deleted" });
   } catch (error) {
     console.error("Delete build log error:", error);
@@ -197,6 +204,7 @@ export async function upsertSocialLink(req: Request, res: Response): Promise<voi
     } else {
       link = await prisma.socialLink.create({ data });
     }
+    invalidateKnowledgeCache();
     res.json(link);
   } catch (error) {
     console.error("Upsert social link error:", error);
@@ -207,6 +215,7 @@ export async function upsertSocialLink(req: Request, res: Response): Promise<voi
 export async function deleteSocialLink(req: Request, res: Response): Promise<void> {
   try {
     await prisma.socialLink.delete({ where: { id: req.params.id as string } });
+    invalidateKnowledgeCache();
     res.json({ message: "Social link deleted" });
   } catch (error) {
     console.error("Delete social link error:", error);
@@ -240,6 +249,7 @@ export async function updateSettings(req: Request, res: Response): Promise<void>
         create: { key, value },
       });
     }
+    invalidateKnowledgeCache();
     res.json({ message: "Settings updated" });
   } catch (error) {
     console.error("Update settings error:", error);

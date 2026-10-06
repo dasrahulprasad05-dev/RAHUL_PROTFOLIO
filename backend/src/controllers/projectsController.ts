@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import prisma from "../config/database.js";
+import { invalidateKnowledgeCache } from "../chat/knowledge.js";
 
 // ─── Public ───────────────────────────────────────────────
 
@@ -98,6 +99,7 @@ export async function createProject(req: Request, res: Response): Promise<void> 
       },
     });
 
+    invalidateKnowledgeCache();
     res.status(201).json({
       ...project,
       technologies: (project as any).technologies.map((pt: any) => pt.technology),
@@ -135,6 +137,7 @@ export async function updateProject(req: Request, res: Response): Promise<void> 
       },
     });
 
+    invalidateKnowledgeCache();
     res.json({
       ...project,
       technologies: (project as any).technologies.map((pt: any) => pt.technology),
@@ -149,6 +152,7 @@ export async function deleteProject(req: Request, res: Response): Promise<void> 
   try {
     const id = req.params.id as string;
     await prisma.project.delete({ where: { id } });
+    invalidateKnowledgeCache();
     res.json({ message: "Project deleted" });
   } catch (error) {
     console.error("Delete project error:", error);

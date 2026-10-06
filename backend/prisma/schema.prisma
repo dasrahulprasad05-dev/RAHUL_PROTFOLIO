@@ -180,3 +180,14 @@ model ProjectView {
   referrer  String?
   createdAt DateTime @default(now())
 }
+
+// ─── Chat Logs ────────────────────────────────────────────
+model ChatLog {
+  id        String   @id @default(cuid())
+  question  String
+  answer    String
+  sources   String   // JSON string of sources array
+  answered  Boolean  @default(true)
+  createdAt DateTime @default(now())
+}
+
