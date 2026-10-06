@@ -17,12 +17,17 @@ export interface GenerateResult {
   stream?: AsyncGenerator<string, void, unknown>;
 }
 
-// Fallback models if primary experiences transient 503/404
+// Fallback models if the primary fails
 const FALLBACK_MODELS = [
   "gemini-3.1-flash-lite",
-  "gemini-3.5-flash-lite",
-  "gemini-3.1-flash-lite-preview",
+  "gemini-3.5-flash",
+  "gemini-flash-lite-latest",
 ];
+
+// Statuses where trying the next model can help (not found, rate limit, overload, server error)
+function shouldTryNext(status: number): boolean {
+  return status === 404 || status === 429 || status >= 500;
+}
 
 function sanitizeUrl(url: string): string {
   return url.replace(/key=[^&]+/g, "key=[REDACTED]");
@@ -52,7 +57,7 @@ function buildGeminiRequestBody(system: string, messages: ChatMessage[]) {
  * Generates text or a token stream via Gemini.
  */
 export async function generate(options: GenerateOptions): Promise<GenerateResult> {
-  const apiKey = config.llmApiKey;
+  const apiKey = (config.llmApiKey || "").trim();
   if (!apiKey) {
     throw new Error("LLM_API_KEY is not configured in backend environment.");
   }
@@ -88,8 +93,8 @@ async function generateNonStreaming(
       if (!response.ok) {
         const errorText = await response.text();
         const status = response.status;
-        // If 503 (high demand) or 404 (model deprecated), try next model
-        if ((status === 503 || status === 404) && models.indexOf(model) < models.length - 1) {
+        console.error(`[llm] ${model} failed: HTTP ${status} ${errorText.slice(0, 200)}`);
+        if (shouldTryNext(status) && models.indexOf(model) < models.length - 1) {
           continue;
         }
         throw new Error(`LLM upstream error (${status}): ${errorText.slice(0, 200)}`);
@@ -138,7 +143,8 @@ async function generateStreaming(
       if (!res.ok) {
         const errorText = await res.text();
         const status = res.status;
-        if ((status === 503 || status === 404) && models.indexOf(model) < models.length - 1) {
+        console.error(`[llm] ${model} stream failed: HTTP ${status} ${errorText.slice(0, 200)}`);
+        if (shouldTryNext(status) && models.indexOf(model) < models.length - 1) {
           continue;
         }
         throw new Error(`LLM stream upstream error (${status}): ${errorText.slice(0, 200)}`);

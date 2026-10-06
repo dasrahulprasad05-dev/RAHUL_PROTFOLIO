@@ -194,11 +194,15 @@ export async function POST(req: NextRequest) {
     const backendUrl = process.env.BACKEND_URL;
     if (backendUrl && !backendUrl.includes("localhost")) {
       try {
-        const upstream = await fetch(`${backendUrl}/chat?stream=true`, {
+        const upstream = await fetch(`${backendUrl.replace(/\/$/, "")}/chat?stream=true`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ messages: trimmed }),
+          signal: AbortSignal.timeout(10000),
         });
+        if (!upstream.ok) {
+          console.error(`[chat] backend returned ${upstream.status}; falling back to direct Gemini`);
+        }
         if (upstream.ok && upstream.body) {
           return new Response(upstream.body, {
             headers: {
@@ -208,16 +212,14 @@ export async function POST(req: NextRequest) {
             },
           });
         }
-      } catch {
-        // Fallback to internal serverless handler below
+      } catch (err) {
+        console.error("[chat] backend unreachable; falling back to direct Gemini:", err);
       }
     }
 
     // 2. Direct serverless execution (runs natively on Vercel)
-    const apiKey =
-      process.env.LLM_API_KEY ||
-      process.env.GEMINI_API_KEY ||
-      process.env.NEXT_PUBLIC_GEMINI_API_KEY;
+    // NOTE: never read a key from a NEXT_PUBLIC_ variable, it ships to the browser.
+    const apiKey = (process.env.LLM_API_KEY || process.env.GEMINI_API_KEY || "").trim();
 
     if (!apiKey) {
       return new Response(
@@ -251,34 +253,50 @@ export async function POST(req: NextRequest) {
       },
     };
 
-    const modelsToTry = [
-      process.env.LLM_MODEL || "gemini-3.1-flash-lite",
-      "gemini-3.5-flash-lite",
-      "gemini-3.1-flash-lite-preview",
-    ];
+    // Only models that exist today.
+    const modelsToTry = Array.from(
+      new Set(
+        [
+          process.env.LLM_MODEL?.trim(),
+          "gemini-3.1-flash-lite",
+          "gemini-3.5-flash",
+          "gemini-flash-lite-latest",
+        ].filter((m): m is string => Boolean(m))
+      )
+    );
 
     let geminiResponse: Response | null = null;
+    let lastStatus = 0;
     for (const model of modelsToTry) {
       try {
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:streamGenerateContent?alt=sse&key=${apiKey}`;
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:streamGenerateContent?alt=sse`;
         const res = await fetch(url, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json", "x-goog-api-key": apiKey },
           body: JSON.stringify(geminiBody),
         });
         if (res.ok && res.body) {
           geminiResponse = res;
           break;
         }
-      } catch {
-        // Try next fallback model
+        lastStatus = res.status;
+        const errDetail = (await res.text().catch(() => "")).slice(0, 300);
+        // Visible in Vercel -> Project -> Logs. This is the real reason for the failure.
+        console.error(`[chat] Gemini ${model} failed: HTTP ${res.status} ${errDetail}`);
+      } catch (err) {
+        console.error(`[chat] Gemini ${model} network error:`, err);
       }
     }
 
     if (!geminiResponse || !geminiResponse.body) {
+      const busy = lastStatus === 429;
       return new Response(
-        JSON.stringify({ error: "The AI assistant is temporarily unavailable. Please try again shortly." }),
-        { status: 502, headers: { "Content-Type": "application/json" } }
+        JSON.stringify({
+          error: busy
+            ? "The AI assistant is getting a lot of requests right now. Please try again in a minute."
+            : "The AI assistant is temporarily unavailable. Please try again shortly.",
+        }),
+        { status: busy ? 429 : 502, headers: { "Content-Type": "application/json" } }
       );
     }
 
@@ -304,7 +322,9 @@ export async function POST(req: NextRequest) {
               if (trimmedLine.startsWith("data: ")) {
                 try {
                   const json = JSON.parse(trimmedLine.slice(6));
-                  const text = json.candidates?.[0]?.content?.parts?.[0]?.text;
+                  const text = (json.candidates?.[0]?.content?.parts ?? [])
+                    .map((part: { text?: string }) => part.text ?? "")
+                    .join("");
                   if (text) {
                     accumulatedText += text;
                     controller.enqueue(

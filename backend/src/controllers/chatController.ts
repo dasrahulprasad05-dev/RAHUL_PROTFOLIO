@@ -87,19 +87,21 @@ export async function handleChat(req: Request, res: Response): Promise<void> {
     }
 
     // Server-Sent Events (SSE) streaming
-    res.setHeader("Content-Type", "text/event-stream");
-    res.setHeader("Cache-Control", "no-cache, no-transform");
-    res.setHeader("Connection", "keep-alive");
-    res.flushHeaders?.();
-
     let fullAnswer = "";
 
     try {
+      // Connect to the LLM BEFORE sending SSE headers, so a failure returns a real
+      // 502 and the Next.js proxy can fall back to calling Gemini directly.
       const result = await generate({
         system: systemPrompt,
         messages: trimmedMessages,
         stream: true,
       });
+
+      res.setHeader("Content-Type", "text/event-stream");
+      res.setHeader("Cache-Control", "no-cache, no-transform");
+      res.setHeader("Connection", "keep-alive");
+      res.flushHeaders?.();
 
       if (result.stream) {
         for await (const token of result.stream) {
