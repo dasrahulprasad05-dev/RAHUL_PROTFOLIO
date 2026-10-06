@@ -132,7 +132,13 @@ export default function HomePage() {
       {/* ─── Hero ──────────────────────────────────────── */}
       <section className="relative min-h-[85vh] flex items-center justify-center overflow-hidden">
         {/* Background Gradient Orbs — Enhanced with parallax-like movement */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div
+          className="absolute inset-0 overflow-hidden pointer-events-none"
+          style={{
+            WebkitMaskImage: 'linear-gradient(to bottom, #000 60%, transparent 100%)',
+            maskImage: 'linear-gradient(to bottom, #000 60%, transparent 100%)',
+          }}
+        >
           <div className="absolute -top-40 -right-40 w-[500px] h-[500px] rounded-full bg-[var(--color-brand)] opacity-[0.08] blur-[120px] animate-float-slow" />
           <div className="absolute -bottom-40 -left-40 w-[500px] h-[500px] rounded-full bg-[var(--color-accent)] opacity-[0.06] blur-[120px] animate-float-slow" style={{ animationDelay: '-3s' }} />
           <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[400px] h-[400px] rounded-full bg-gradient-to-br from-[var(--color-brand)] to-[var(--color-accent)] opacity-[0.04] blur-[100px] animate-float-slow" style={{ animationDelay: '-1.5s' }} />
@@ -144,15 +150,15 @@ export default function HomePage() {
           backgroundSize: '40px 40px'
         }} />
 
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-16 md:py-24">
+        <div className="relative w-full max-w-6xl mx-auto px-4 sm:px-6 py-16 md:py-24">
           <motion.div
             variants={stagger}
             initial="hidden"
             animate="visible"
-            className="max-w-3xl"
+            className="max-w-3xl mx-auto md:mx-0 text-center md:text-left"
           >
             {/* Label with glowing border */}
-            <motion.div variants={fadeUp} className="mb-6">
+            <motion.div variants={fadeUp} className="mb-6 flex justify-center md:justify-start">
               <span className="section-label badge-glow inline-flex items-center gap-2 px-4 py-1.5 rounded-full border bg-[var(--color-surface-elevated)]">
                 <span className="w-2 h-2 rounded-full bg-[var(--color-success)]">
                   <span className="block w-2 h-2 rounded-full bg-[var(--color-success)] animate-ping" />
@@ -188,7 +194,7 @@ export default function HomePage() {
             </motion.p>
 
             {/* CTA Buttons */}
-            <motion.div variants={fadeUp} className="flex flex-wrap gap-4">
+            <motion.div variants={fadeUp} className="flex flex-wrap justify-center md:justify-start gap-3 sm:gap-4">
               <Link href="/work" className="btn btn-primary group">
                 Explore my work
                 <ArrowRight
@@ -242,13 +248,13 @@ export default function HomePage() {
       {/* ─── Currently Building ────────────────────────── */}
       {currentProject && (
         <SectionWrapper className="max-w-6xl mx-auto px-4 sm:px-6 pb-20">
-          <div className="card border-[var(--color-brand)]/20 bg-gradient-to-br from-[var(--color-surface-elevated)] to-[var(--color-brand-glow)] overflow-hidden animate-shimmer">
+          <div className="card border-[var(--color-brand)]/20 bg-gradient-to-br from-[var(--color-surface-elevated)] to-[var(--color-brand-glow)] overflow-hidden">
             {/* Left accent bar */}
             <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-[var(--color-brand)] to-[var(--color-accent)]" />
             
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pl-4">
               <div className="flex items-start gap-4">
-                <div className="p-3 rounded-2xl bg-[var(--color-brand-glow)] text-[var(--color-brand)]">
+                <div className="shrink-0 p-3 rounded-2xl bg-[var(--color-brand-glow)] text-[var(--color-brand)]">
                   <Brain size={24} />
                 </div>
                 <div>
@@ -274,7 +280,7 @@ export default function HomePage() {
                     href={currentProject.liveUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="btn btn-primary text-xs py-2 px-3 flex items-center gap-1.5"
+                    className="btn btn-primary text-xs py-2 px-3 flex items-center gap-1.5 whitespace-nowrap"
                   >
                     <ExternalLink size={14} /> Live Demo
                   </a>

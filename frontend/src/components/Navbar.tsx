@@ -24,9 +24,8 @@ export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 8);
+    const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", handleScroll, { passive: true });
-    handleScroll();
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
@@ -46,12 +45,16 @@ export default function Navbar() {
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-200 ${
-          scrolled ? "nav-glass-scrolled" : "nav-glass"
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+          scrolled
+            ? "backdrop-blur-xl border-b border-[var(--color-border)] shadow-sm"
+            : "md:bg-transparent backdrop-blur-md md:backdrop-blur-none border-b border-[var(--color-border-subtle)] md:border-b-0"
         }`}
         style={{
-          backgroundColor: scrolled
-            ? 'color-mix(in srgb, var(--color-surface) 92%, transparent)'
+          backgroundColor: mobileOpen
+            ? 'var(--color-surface)'
+            : scrolled
+            ? 'color-mix(in srgb, var(--color-surface) 94%, transparent)'
             : 'color-mix(in srgb, var(--color-surface) 80%, transparent)',
         }}
       >
@@ -152,8 +155,8 @@ export default function Navbar() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-x-0 top-16 bottom-0 z-[45] mobile-menu-glass md:hidden overflow-y-auto flex flex-col justify-between p-6"
-            style={{ backgroundColor: 'color-mix(in srgb, var(--color-surface) 100%, transparent)' }}
+            className="fixed inset-x-0 top-16 bottom-0 z-[45] md:hidden overflow-y-auto overscroll-contain flex flex-col justify-between p-6"
+            style={{ backgroundColor: 'var(--color-surface)' }}
           >
             <nav className="flex flex-col gap-2 w-full pt-2">
               {navLinks.map((link, i) => {
