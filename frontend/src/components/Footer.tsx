@@ -1,6 +1,6 @@
 "use client";
 
-import { Github, Linkedin, Twitter } from "@/components/Icons";
+import { Github, Linkedin, Twitter, Instagram } from "@/components/Icons";
 import Link from "next/link";
 import {
   Mail, ArrowUp
@@ -10,6 +10,7 @@ import { useState, useEffect } from "react";
 const socialLinks = [
   { icon: Github, href: "https://github.com/dasrahulprasad05-dev", label: "GitHub" },
   { icon: Linkedin, href: "https://linkedin.com/in/rahul-prasad-das", label: "LinkedIn" },
+  { icon: Instagram, href: "https://www.instagram.com/the___cyber__rahul/", label: "Instagram" },
   { icon: Twitter, href: "https://x.com", label: "Twitter" },
   { icon: Mail, href: "mailto:dasrahulprasad05@gmail.com", label: "Email" },
 ];

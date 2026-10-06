@@ -1,6 +1,6 @@
 "use client";
 
-import { Github, Linkedin, Twitter } from "@/components/Icons";
+import { Github, Linkedin, Twitter, Instagram } from "@/components/Icons";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
@@ -202,6 +202,7 @@ export default function AboutPage() {
                   {[
                     { icon: Github, label: "GitHub Profile", href: settings.github_url || "https://github.com/dasrahulprasad05-dev" },
                     { icon: Linkedin, label: "LinkedIn Connection", href: settings.linkedin_url || "https://linkedin.com/in/rahul-prasad-das" },
+                    { icon: Instagram, label: "Instagram (@the___cyber__rahul)", href: settings.instagram_url || "https://www.instagram.com/the___cyber__rahul/" },
                     { icon: Twitter, label: "Twitter / X", href: "https://x.com" },
                     { icon: Mail, label: "Direct Email", href: `mailto:${settings.contact_email || "dasrahulprasad05@gmail.com"}` },
                   ].map((s) => (

@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from "./ThemeProvider";
 import { Sun, Moon, Menu, X, ArrowUpRight } from "lucide-react";
-import { Github, Linkedin } from "@/components/Icons";
+import { Github, Linkedin, Instagram } from "@/components/Icons";
 
 const navLinks = [
   { href: "/work", label: "Work" },
@@ -221,6 +221,15 @@ export default function Navbar() {
                   aria-label="LinkedIn"
                 >
                   <Linkedin size={18} />
+                </a>
+                <a
+                  href="https://www.instagram.com/the___cyber__rahul/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-1.5 rounded-lg hover:text-[var(--color-brand)] hover:bg-[var(--color-surface-alt)] transition-colors"
+                  aria-label="Instagram"
+                >
+                  <Instagram size={18} />
                 </a>
               </div>
             </div>

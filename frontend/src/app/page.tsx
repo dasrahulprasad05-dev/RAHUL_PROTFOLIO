@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import SectionWrapper from "@/components/SectionWrapper";
 import { api, type ProjectWithTech, type BuildLog } from "@/lib/api";
+import { fallbackProjects, fallbackSettings, fallbackBuildLogs } from "@/lib/fallbackData";
 
 // ─── Stagger animation helpers ────────────────────────────
 const stagger = {
@@ -100,10 +101,12 @@ function getCategoryAccent(category: string): string {
 }
 
 export default function HomePage() {
-  const [projects, setProjects] = useState<ProjectWithTech[]>([]);
-  const [settings, setSettings] = useState<Record<string, string>>({});
-  const [buildLogs, setBuildLogs] = useState<BuildLog[]>([]);
-  const [loaded, setLoaded] = useState(false);
+  const [projects, setProjects] = useState<ProjectWithTech[]>(() =>
+    fallbackProjects.filter((p) => p.featured)
+  );
+  const [settings, setSettings] = useState<Record<string, string>>(() => fallbackSettings);
+  const [buildLogs, setBuildLogs] = useState<BuildLog[]>(() => fallbackBuildLogs.slice(0, 3));
+  const [loaded, setLoaded] = useState(true);
 
   useEffect(() => {
     Promise.all([
@@ -112,9 +115,9 @@ export default function HomePage() {
       api.getBuildLogs(),
     ])
       .then(([proj, sett, logs]) => {
-        setProjects(proj);
-        setSettings(sett);
-        setBuildLogs(logs.slice(0, 3));
+        if (proj && proj.length > 0) setProjects(proj);
+        if (sett && Object.keys(sett).length > 0) setSettings(sett);
+        if (logs && logs.length > 0) setBuildLogs(logs.slice(0, 3));
         setLoaded(true);
       })
       .catch(() => setLoaded(true));
@@ -124,6 +127,7 @@ export default function HomePage() {
 
   const currentProject =
     projects.find((p) => p.slug === "swasthya-sathi-ai") ||
+    fallbackProjects.find((p) => p.slug === "swasthya-sathi-ai") ||
     projects.find((p) => p.status === "live" || p.status === "in-development") ||
     projects[0];
 

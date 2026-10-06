@@ -658,5 +658,6 @@ export const fallbackSettings: Record<string, string> = {
   contact_email: "dasrahulprasad05@gmail.com",
   github_url: "https://github.com/dasrahulprasad05-dev",
   linkedin_url: "https://linkedin.com/in/rahul-prasad-das",
+  instagram_url: "https://www.instagram.com/the___cyber__rahul/",
   about_text: "I'm Rahul Prasad Das, a B.Tech Computer Science student at Ajay Binay Institute of Technology (ABIT), Cuttack, passionate about Full-Stack Engineering, Artificial Intelligence, and building impactful real-world software.\n\nI created ABIT EventHub—the official event ticketing and in-browser QR scanning platform for our college fest—and Swasthya Sathi AI, an accessible voice-enabled public healthcare companion for Odisha with native Odia NLP.\n\nMy focus spans modern web architecture (Next.js 16, React 19, TypeScript, PostgreSQL, Prisma), AI/ML systems (RAG pipelines, LLMs, computer vision), and building tools that deliver measurable utility to thousands of users.",
 };

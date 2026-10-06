@@ -133,8 +133,9 @@ export const api = {
       return [
         { id: "sl-1", platform: "github", url: "https://github.com/dasrahulprasad05-dev", icon: "Github", order: 1 },
         { id: "sl-2", platform: "linkedin", url: "https://linkedin.com/in/rahul-prasad-das", icon: "Linkedin", order: 2 },
-        { id: "sl-3", platform: "twitter", url: "https://x.com", icon: "Twitter", order: 3 },
-        { id: "sl-4", platform: "email", url: "mailto:dasrahulprasad05@gmail.com", icon: "Mail", order: 4 },
+        { id: "sl-3", platform: "instagram", url: "https://www.instagram.com/the___cyber__rahul/", icon: "Instagram", order: 3 },
+        { id: "sl-4", platform: "twitter", url: "https://x.com", icon: "Twitter", order: 4 },
+        { id: "sl-5", platform: "email", url: "mailto:dasrahulprasad05@gmail.com", icon: "Mail", order: 5 },
       ];
     }
   },

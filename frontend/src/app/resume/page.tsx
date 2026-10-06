@@ -1,6 +1,6 @@
 "use client";
 
-import { Github, Linkedin } from "@/components/Icons";
+import { Github, Linkedin, Instagram } from "@/components/Icons";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import {
@@ -145,6 +145,15 @@ export default function ResumePage() {
                   >
                     <Linkedin size={16} className="text-[var(--color-brand)] flex-shrink-0" />
                     <span className="truncate">linkedin.com/in/rahul-prasad-das</span>
+                  </a>
+                  <a
+                    href={settings.instagram_url || "https://www.instagram.com/the___cyber__rahul/"}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 text-[var(--color-text-secondary)] hover:text-[var(--color-brand)] transition-colors"
+                  >
+                    <Instagram size={16} className="text-[var(--color-brand)] flex-shrink-0" />
+                    <span className="truncate">instagram.com/the___cyber__rahul</span>
                   </a>
                 </div>
               </div>

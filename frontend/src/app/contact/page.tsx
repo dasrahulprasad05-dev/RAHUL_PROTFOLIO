@@ -1,6 +1,6 @@
 "use client";
 
-import { Github, Linkedin } from "@/components/Icons";
+import { Github, Linkedin, Instagram } from "@/components/Icons";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import {
@@ -245,6 +245,24 @@ export default function ContactPage() {
                     <div className="text-[11px] text-[var(--color-text-muted)] font-mono">Professional Network</div>
                     <div className="text-xs font-semibold text-[var(--color-text-primary)] group-hover:text-[var(--color-brand)] transition-colors">
                       linkedin.com/in/rahul-prasad-das
+                    </div>
+                  </div>
+                </a>
+
+                {/* Instagram */}
+                <a
+                  href="https://www.instagram.com/the___cyber__rahul/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-3 rounded-xl bg-[var(--color-surface-alt)] border border-[var(--color-border-subtle)] flex items-center gap-3 hover:border-[var(--color-brand)] transition-colors group"
+                >
+                  <div className="w-9 h-9 rounded-lg bg-[var(--color-brand-glow)] text-[var(--color-brand)] flex items-center justify-center flex-shrink-0">
+                    <Instagram size={16} />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="text-[11px] text-[var(--color-text-muted)] font-mono">Instagram Profile</div>
+                    <div className="text-xs font-semibold text-[var(--color-text-primary)] group-hover:text-[var(--color-brand)] transition-colors">
+                      @the___cyber__rahul
                     </div>
                   </div>
                 </a>
