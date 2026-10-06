@@ -65,7 +65,7 @@ export default function AdminAchievements() {
             <div className="space-y-4">
               <div><label className="block text-sm font-medium mb-1">Title</label><input value={editing.title || ""} onChange={(e) => setEditing({ ...editing, title: e.target.value })} className="input" /></div>
               <div><label className="block text-sm font-medium mb-1">Organization</label><input value={editing.organization || ""} onChange={(e) => setEditing({ ...editing, organization: e.target.value })} className="input" /></div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div><label className="block text-sm font-medium mb-1">Date</label><input value={editing.date || ""} onChange={(e) => setEditing({ ...editing, date: e.target.value })} className="input" placeholder="e.g., 2025" /></div>
                 <div><label className="block text-sm font-medium mb-1">Category</label>
                   <select value={editing.category || ""} onChange={(e) => setEditing({ ...editing, category: e.target.value })} className="input">

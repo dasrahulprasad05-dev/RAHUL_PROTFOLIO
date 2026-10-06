@@ -49,6 +49,11 @@ export default function Navbar() {
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-200 ${
           scrolled ? "nav-glass-scrolled" : "nav-glass"
         }`}
+        style={{
+          backgroundColor: scrolled
+            ? 'color-mix(in srgb, var(--color-surface) 92%, transparent)'
+            : 'color-mix(in srgb, var(--color-surface) 80%, transparent)',
+        }}
       >
         <nav className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           {/* Logo */}
@@ -148,6 +153,7 @@ export default function Navbar() {
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.2 }}
             className="fixed inset-x-0 top-16 bottom-0 z-[45] mobile-menu-glass md:hidden overflow-y-auto flex flex-col justify-between p-6"
+            style={{ backgroundColor: 'color-mix(in srgb, var(--color-surface) 100%, transparent)' }}
           >
             <nav className="flex flex-col gap-2 w-full pt-2">
               {navLinks.map((link, i) => {

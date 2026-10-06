@@ -60,7 +60,7 @@ export default function AdminEducation() {
             <div className="space-y-4">
               <div><label className="block text-sm font-medium mb-1">Degree</label><input value={editing.degree || ""} onChange={(e) => setEditing({ ...editing, degree: e.target.value })} className="input" /></div>
               <div><label className="block text-sm font-medium mb-1">Institution</label><input value={editing.institution || ""} onChange={(e) => setEditing({ ...editing, institution: e.target.value })} className="input" /></div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div><label className="block text-sm font-medium mb-1">Start Year</label><input value={editing.startYear || ""} onChange={(e) => setEditing({ ...editing, startYear: e.target.value })} className="input" /></div>
                 <div><label className="block text-sm font-medium mb-1">End Year</label><input value={editing.endYear || ""} onChange={(e) => setEditing({ ...editing, endYear: e.target.value })} className="input" placeholder="Leave empty if current" /></div>
               </div>
