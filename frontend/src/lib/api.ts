@@ -1,4 +1,8 @@
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
+const API_BASE =
+  process.env.NEXT_PUBLIC_API_URL ||
+  (typeof window !== "undefined" && !window.location.hostname.includes("localhost")
+    ? "/api"
+    : "http://localhost:5000/api");
 
 interface FetchOptions extends RequestInit {
   token?: string;
